@@ -1,6 +1,6 @@
 package app.servlets;
 
-import app.entities.User;
+import app.entities.Department;
 import app.model.Model;
 
 import javax.servlet.RequestDispatcher;
@@ -20,12 +20,11 @@ public class AddServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
-        String password = req.getParameter("pass");
-        User user = new User(name, password);
+        Department dep = new Department(name);
         Model model = Model.getInstance();
-        model.add(user);
+        model.add(dep);
 
-        req.setAttribute("userName", name);
+        req.setAttribute("depName", name);
         doGet(req, resp);
     }
 }
