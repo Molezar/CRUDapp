@@ -1,4 +1,4 @@
-package app.model;
+package app.dbContext;
 
 //import app.entities.User;
 //

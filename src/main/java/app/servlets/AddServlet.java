@@ -1,7 +1,6 @@
 package app.servlets;
 
-import app.entities.Department;
-import app.model.Model;
+import app.services.DepService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,10 +19,7 @@ public class AddServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
-        Department dep = new Department(name);
-        Model model = Model.getInstance();
-        model.add(dep);
-
+        new DepService().add(name);
         req.setAttribute("depName", name);
         doGet(req, resp);
     }
