@@ -21,11 +21,11 @@ Employee {
     public Employee(){
     }
 
-    public int id() {
+    public int getID() {
         return id;
     }
 
-    public void id(int id) {
+    public void setID(int id) {
         this.id = id;
     }
 

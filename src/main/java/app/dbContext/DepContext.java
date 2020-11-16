@@ -11,13 +11,14 @@ import java.util.stream.Collectors;
 public class DepContext {
     private static DepContext instance = new DepContext();
 
-    PreparedStatement preparedStatement = null;
+    static PreparedStatement preparedStatement = null;
     Connection connection = null;
 
     private static final String INSERT_NEW = "INSERT INTO departments (name)  VALUES(?)";
+    private static final String GETALLDEPS = "SELECT * FROM departments";
 
 
-    private List<Department> department;
+    private static List<Department> department;
 
     public static DepContext getInstance() {
         return instance;
@@ -25,6 +26,27 @@ public class DepContext {
 
     private DepContext() {
         department = new ArrayList<>();
+        DBWorker worker = new DBWorker();
+
+        try {
+            preparedStatement = worker.getConnection().prepareStatement(GETALLDEPS);
+            ResultSet res = preparedStatement.executeQuery();
+            while(res.next()) {
+                int id = res.getInt("id");
+                String name = res.getString("name");
+                department.add(new Department(id, name));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public int getLastID() {
+        Department lastdep = department.get(department.size() - 1);
+        int id = lastdep.getDepID();
+        return id;
     }
 
     public void add(Department dep) {

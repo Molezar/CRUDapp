@@ -5,13 +5,21 @@ import java.util.Objects;
 public class Department {
 
     private String DepName;
+    private int DepID;
 
     public Department(){
 
     }
 
-    public Department(String DepName) {
+    public Department(int DepID, String DepName) {
+        this.DepID = DepID;
         this.DepName = DepName;
+    }
+
+    public int getDepID() { return DepID; }
+
+    public void setDepID(int DepName) {
+        this.DepID = DepID;
     }
 
     public String getDepName() {

@@ -8,8 +8,10 @@ public class DepService {
         if (StringExtension.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("empty or null name");
         } else {
-            app.entities.Department dep = new app.entities.Department(name);
             DepContext depContext = DepContext.getInstance();
+            int lastid = depContext.getLastID();
+            int id = lastid + 1;
+            app.entities.Department dep = new app.entities.Department(id, name);
             depContext.add(dep);
         }
     }
