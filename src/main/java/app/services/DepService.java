@@ -15,4 +15,15 @@ public class DepService {
             depContext.add(dep);
         }
     }
+
+        public void remove(int id) {
+            DepContext depContext = DepContext.getInstance();
+            depContext.remove(id);
+        }
+
+        public String getNameById(int id) {
+            DepContext depContext = DepContext.getInstance();
+            String depName = depContext.getNameById(id);
+            return depName;
+        }
 }

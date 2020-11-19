@@ -16,6 +16,7 @@ public class DepContext {
 
     private static final String INSERT_NEW = "INSERT INTO departments (name)  VALUES(?)";
     private static final String GETALLDEPS = "SELECT * FROM departments";
+    private static final String DELETE = "DELETE FROM departments WHERE id=?";
 
 
     private static List<Department> department;
@@ -43,11 +44,28 @@ public class DepContext {
 
     }
 
+    public String getNameById(int id) {
+        Department dep = department.get(id);
+        return dep.getDepName();
+    }
+
+
     public int getLastID() {
         Department lastdep = department.get(department.size() - 1);
         int id = lastdep.getDepID();
         return id;
     }
+
+        public List<Department> list() {
+        return department;
+    }
+
+
+//    public List<String> list() {
+//        return department.stream()
+//                .map(app.entities.Department::getDepName)
+//                .collect(Collectors.toList());
+//    }
 
     public void add(Department dep) {
         department.add(dep);
@@ -69,13 +87,19 @@ public class DepContext {
 //            } catch (SQLException e) {
 //                System.out.println("unnable to close");
 //            }
-//        }
+       }
 
-    }
+        public void remove(int id) {
 
-    public List<String> list() {
-        return department.stream()
-                .map(app.entities.Department::getDepName)
-                .collect(Collectors.toList());
-    }
+            DBWorker worker = new DBWorker();
+
+            try {
+            preparedStatement = worker.getConnection().prepareStatement(DELETE);
+            preparedStatement.setInt(1,id);
+            preparedStatement.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
 }
