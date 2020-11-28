@@ -25,12 +25,28 @@ public class ListServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+//        new DepService().remove(Integer.parseInt(id));
+
+        String action = req.getParameter("action");
         String id = req.getParameter("depId");
         String name = req.getParameter("depName");
-        new DepService().remove(Integer.parseInt(id));
 
-        Object test = req.getAttribute("name");
-//        if (name == "remove") {
+        switch (action) {
+            case "Delete":
+                new DepService().remove(Integer.parseInt(id));
+                req.setAttribute("depName", name);
+
+                DepContext depContext = DepContext.getInstance();
+                List<Department> deps = depContext.list();
+                req.setAttribute("deps", deps);
+
+                doGet(req, resp);
+
+            case "Edit":
+
+        }
+
+//        if (action == "remove") {
 //            String id = req.getParameter("value" );
 //            String depname = new DepService().getNameById(Integer.parseInt(id));
 //            new DepService().remove(Integer.parseInt(id));

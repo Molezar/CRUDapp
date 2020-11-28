@@ -51,8 +51,12 @@ public class DepContext {
 
 
     public int getLastID() {
-        Department lastdep = department.get(department.size() - 1);
-        int id = lastdep.getDepID();
+        if (!department.isEmpty()) {
+            Department lastdep = department.get(department.size() - 1);
+            int id = lastdep.getDepID();
+            return id;
+        }
+        int id = 0;
         return id;
     }
 
