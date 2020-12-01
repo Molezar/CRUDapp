@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class ListServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         DepContext depContext = DepContext.getInstance();
@@ -25,7 +26,6 @@ public class ListServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        new DepService().remove(Integer.parseInt(id));
 
         String action = req.getParameter("action");
         String id = req.getParameter("depId");
@@ -43,24 +43,9 @@ public class ListServlet extends HttpServlet {
                 doGet(req, resp);
 
             case "Edit":
-
+                String idForEdit = req.getParameter("value" );
+//                resp.sendRedirect("/EditServlet");
+                req.getRequestDispatcher("/EditServlet").forward(req, resp);
         }
-
-//        if (action == "remove") {
-//            String id = req.getParameter("value" );
-//            String depname = new DepService().getNameById(Integer.parseInt(id));
-//            new DepService().remove(Integer.parseInt(id));
-//            req.setAttribute("depName", depname);
-//            doGet(req, resp);
-//
-//        } else if (name == "edit") {
-//            String id = req.getParameter("value" );
-//
-//        }
-//        new DepService().add(name);
-//        req.setAttribute("depName", name);
-//        doGet(req, resp);
-
-
     }
 }

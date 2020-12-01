@@ -38,6 +38,18 @@
                         ${department.getDepName()}
                 </td>
 
+<%--                <td class="w3-container w3-center w3-green w3-round-large w3-hover-blue w3-border w3-border-red">--%>
+<%--                    <form method="get" action="/edit.jsp">--%>
+<%--                        <input type="hidden" value="${department.getDepName()}" name="depName">--%>
+<%--                        <input type="hidden" value="${department.getDepID()}" name="depId">--%>
+<%--                        <input class="w3-button w3-blue w3-center--%>
+<%--                               w3-round-large w3-hover-red w3-border--%>
+<%--                               w3-border-blue w3-hover-border-grey"--%>
+<%--                               type="submit" value="${department.getDepName()}" name="action">--%>
+<%--                    </form>--%>
+<%--                </td>--%>
+
+
                 <td class="w3-container w3-center">
                     <form method="post">
                         <input type="hidden" value="${department.getDepName()}" name="depName">

@@ -94,6 +94,18 @@ public class DepContext {
        }
 
         public void remove(int id) {
+            int k = department.size();
+            int i = 0;
+            while (i!=k) {
+                Department dep = department.get(i);
+                int listId = dep.getDepID();
+                if (listId == id) {
+                    department.remove(i);
+                    break;
+                }
+            i++;
+            }
+
 
             DBWorker worker = new DBWorker();
 

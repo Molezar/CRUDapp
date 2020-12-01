@@ -3,6 +3,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
+
+    <!--  add servlet -->
     <servlet>
         <servlet-name>add</servlet-name>
         <servlet-class>app.servlets.AddServlet</servlet-class>
@@ -22,6 +24,17 @@
     <servlet-mapping>
         <servlet-name>list</servlet-name>
         <url-pattern>/list</url-pattern>
+    </servlet-mapping>
+
+    <!-- edit servlet -->
+    <servlet>
+        <servlet-name>edit</servlet-name>
+        <servlet-class>app.servlets.EditServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>edit</servlet-name>
+        <url-pattern>/edit</url-pattern>
     </servlet-mapping>
 
 </web-app>
