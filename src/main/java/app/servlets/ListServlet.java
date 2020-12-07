@@ -43,9 +43,9 @@ public class ListServlet extends HttpServlet {
                 doGet(req, resp);
 
             case "Edit":
-                String idForEdit = req.getParameter("value" );
-//                resp.sendRedirect("/EditServlet");
-                req.getRequestDispatcher("/EditServlet").forward(req, resp);
+//                String idForEdit = req.getParameter("depId");
+//                resp.sendRedirect("edit");
+                req.getRequestDispatcher("edit").forward(req, resp);
         }
     }
 }

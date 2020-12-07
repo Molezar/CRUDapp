@@ -1,6 +1,6 @@
 package app.servlets;
 
-//import app.services.DepService;
+import app.services.DepService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,11 +17,27 @@ public class EditServlet extends HttpServlet {
         requestDispatcher.forward(req, resp);
     }
 
-//    @Override
-//    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        String name = req.getParameter("name");
-//        new DepService().add(name);
-//        req.setAttribute("depName", name);
-//        doGet(req, resp);
-//    }
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String newName = req.getParameter("newDepName");
+        if (newName!=null){
+            String id = req.getParameter("NewDepId");
+            req.setAttribute("rDepName", newName);
+            req.setAttribute("rDepId", id);
+            req.setAttribute("newDepName", newName);
+
+            //        new DepService().edit(id);
+            doGet(req, resp);
+
+        }
+        String id = req.getParameter("depId");
+        String name = req.getParameter("depName");
+
+        req.setAttribute("rDepName", name);
+        req.setAttribute("rDepId", id);
+
+        //        new DepService().edit(id);
+        doGet(req, resp);
+    }
 }
