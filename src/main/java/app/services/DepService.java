@@ -16,10 +16,17 @@ public class DepService {
         }
     }
 
-        public void remove(int id) {
-            DepContext depContext = DepContext.getInstance();
-            depContext.remove(id);
-        }
+    public void remove(int id) {
+        DepContext depContext = DepContext.getInstance();
+        depContext.remove(id);
+    }
+
+    public void edit(int id, String newName) {
+        DepContext depContext = DepContext.getInstance();
+        depContext.edit(id, newName);
+    }
+
+
 
         public String getNameById(int id) {
             DepContext depContext = DepContext.getInstance();

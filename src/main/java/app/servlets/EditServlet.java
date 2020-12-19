@@ -22,12 +22,12 @@ public class EditServlet extends HttpServlet {
 
         String newName = req.getParameter("newDepName");
         if (newName!=null){
-            String id = req.getParameter("NewDepId");
+            String id = req.getParameter("newDepId");
             req.setAttribute("rDepName", newName);
             req.setAttribute("rDepId", id);
             req.setAttribute("newDepName", newName);
 
-            //        new DepService().edit(id);
+                    new DepService().edit(Integer.parseInt(id), newName);
             doGet(req, resp);
 
         }
@@ -37,7 +37,6 @@ public class EditServlet extends HttpServlet {
         req.setAttribute("rDepName", name);
         req.setAttribute("rDepId", id);
 
-        //        new DepService().edit(id);
         doGet(req, resp);
     }
 }

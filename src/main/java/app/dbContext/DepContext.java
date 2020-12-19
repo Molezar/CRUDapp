@@ -16,7 +16,8 @@ public class DepContext {
 
     private static final String INSERT_NEW = "INSERT INTO departments (name)  VALUES(?)";
     private static final String GETALLDEPS = "SELECT * FROM departments";
-    private static final String DELETE = "DELETE FROM departments WHERE id=?";
+    private static final String DELETE = "DELETE FROM departments WHERE id = ?";
+    private static final String UPDATE = "UPDATE departments SET name = ? WHERE id = ?";
 
 
     private static List<Department> department;
@@ -118,4 +119,32 @@ public class DepContext {
             }
         }
 
-}
+        public void edit(int id, String newName) {
+            int k = department.size();
+            int i = 0;
+            while (i!=k) {
+                Department dep = department.get(i);
+                int listId = dep.getDepID();
+                if (listId == id) {
+                    dep.setDepName(newName);
+                    break;
+                }
+                i++;
+            }
+
+            DBWorker worker = new DBWorker();
+            try {
+                preparedStatement = worker.getConnection().prepareStatement(UPDATE);
+                preparedStatement.setString(1,newName);
+                preparedStatement.setInt(2, id);
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+//        ту ду
+        }
+
+
+    }
