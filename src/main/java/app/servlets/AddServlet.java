@@ -19,8 +19,17 @@ public class AddServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String name = req.getParameter("name");
-        new DepService().add(name);
-        req.setAttribute("depName", name);
-        doGet(req, resp);
+
+        boolean test;
+        test = new DepService().add(name);
+        if (test != false) {
+            req.setAttribute("depName", name);
+            doGet(req, resp);
+        } else {
+            String sameName = "same";
+            req.setAttribute("depName", name);
+            req.setAttribute("sameDepName", sameName);
+            doGet(req, resp);
+        }
     }
 }

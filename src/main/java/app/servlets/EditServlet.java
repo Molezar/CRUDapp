@@ -20,17 +20,28 @@ public class EditServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String newName = req.getParameter("newDepName");
-        if (newName!=null){
-            String id = req.getParameter("newDepId");
-            req.setAttribute("rDepName", newName);
-            req.setAttribute("rDepId", id);
-            req.setAttribute("newDepName", newName);
+            String newName = req.getParameter("newDepName");
 
-                    new DepService().edit(Integer.parseInt(id), newName);
-            doGet(req, resp);
+            if (newName != null) {
 
-        }
+                String id = req.getParameter("newDepId");
+                req.setAttribute("rDepName", newName);
+                req.setAttribute("rDepId", id);
+                req.setAttribute("newDepName", newName);
+
+                boolean test;
+                test = new DepService().edit(Integer.parseInt(id), newName);
+                if (test!=false) {
+                    doGet(req, resp);
+                } else {
+                    String sameName = "same";
+                    req.setAttribute("sameDepName", sameName);
+                    doGet(req, resp);
+
+                }
+            }
+
+
         String id = req.getParameter("depId");
         String name = req.getParameter("depName");
 

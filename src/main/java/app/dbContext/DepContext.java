@@ -72,15 +72,24 @@ public class DepContext {
 //                .collect(Collectors.toList());
 //    }
 
-    public void add(Department dep) {
-        department.add(dep);
+    public boolean add(Department dep) {
+
+        int k = department.size();
+        int i = 0;
+        while (i!=k) {
+            Department sdep = department.get(i);
+            String listName = sdep.getDepName();
+            if (listName.equals(dep.getDepName())) {
+                return false;
+            }
+            i++;
+        }
+            department.add(dep);
 
         DBWorker worker = new DBWorker();
 
         try {
             preparedStatement = worker.getConnection().prepareStatement(INSERT_NEW);
-
-//            preparedStatement.setInt(1,1);
             preparedStatement.setString(1,dep.getDepName());
             preparedStatement.execute();
         } catch (SQLException e) {
@@ -92,6 +101,7 @@ public class DepContext {
 //            } catch (SQLException e) {
 //                System.out.println("unnable to close");
 //            }
+        return true;
        }
 
         public void remove(int id) {
@@ -119,13 +129,18 @@ public class DepContext {
             }
         }
 
-        public void edit(int id, String newName) {
+        public boolean edit(int id, String newName) {
             int k = department.size();
             int i = 0;
             while (i!=k) {
                 Department dep = department.get(i);
                 int listId = dep.getDepID();
                 if (listId == id) {
+                    String testname = dep.getDepName();
+                    boolean test = (testname.equals(newName));
+                            if (test!=false) {
+                                return false;
+                            }
                     dep.setDepName(newName);
                     break;
                 }
@@ -141,9 +156,7 @@ public class DepContext {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
-
-//        ту ду
+            return true;
         }
 
 
