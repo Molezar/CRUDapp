@@ -3,6 +3,9 @@ package app.servlets;
 import app.dbContext.DepContext;
 import app.entities.Department;
 import app.services.DepService;
+import app.dbContext.EmpContext;
+import app.entities.Employee;
+import app.services.EmpService;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,15 +15,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-public class ListServlet extends HttpServlet {
+public class EmplistServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        DepContext depContext = DepContext.getInstance();
-        List<Department> deps = depContext.list();
-        req.setAttribute("deps", deps);
+        EmpContext empContext = EmpContext.getInstance();
+        List<Employee> emps = empContext.list();
+        req.setAttribute("emps", emps);
 
-        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/list.jsp");
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/emplist.jsp");
         requestDispatcher.forward(req, resp);
     }
 
@@ -28,22 +31,22 @@ public class ListServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String action = req.getParameter("action");
-        String id = req.getParameter("depId");
-        String name = req.getParameter("depName");
+        String id = req.getParameter("empId");
+        String name = req.getParameter("empName");
 
         switch (action) {
             case "Delete":
-                new DepService().remove(Integer.parseInt(id));
-                req.setAttribute("depName", name);
+                new EmpService().remove(Integer.parseInt(id));
+                req.setAttribute("empName", name);
 
-                DepContext depContext = DepContext.getInstance();
-                List<Department> deps = depContext.list();
-                req.setAttribute("deps", deps);
+                EmpContext empContext = EmpContext.getInstance();
+                List<Employee> emps = empContext.list();
+                req.setAttribute("emps", emps);
 
                 doGet(req, resp);
 
             case "Edit":
-                req.getRequestDispatcher("edit").forward(req, resp);
+                req.getRequestDispatcher("empedit").forward(req, resp);
             case "Emplist":
                 req.getRequestDispatcher("emplist").forward(req, resp);
 

@@ -1,32 +1,39 @@
 package app.entities;
 
+import java.util.Objects;
+import java.util.Date;
+
 public class
 Employee {
-    private int id;
+    private int EmpID;
     private String Email;
     private String FamilyName;
     private String Name;
-    private int DayOfBirth;
-    private int MonthOfBirth;
-    private int YearOfBirth;
+    private Date Date;
+//    private int DayOfBirth;
+//    private int MonthOfBirth;
+//    private int YearOfBirth;
+    private int ZP;
 
-    public Employee(int id, String Email, String FamilyName, String Name, int DayOfBirth, int MonthOfBirth, int YearOfBirth) {
+
+    public Employee(int EmpID,  String Name,  String FamilyName, String Email, Date Date,  int ZP) {
+        this.EmpID = EmpID;
+        this.Email = Email;
         this.FamilyName = FamilyName;
         this.Name = Name;
-        this.DayOfBirth = DayOfBirth;
-        this.MonthOfBirth = MonthOfBirth;
-        this.YearOfBirth = YearOfBirth;
+        this.Date = Date;
+        this.ZP = ZP;
     }
 
     public Employee(){
     }
 
-    public int getID() {
-        return id;
+    public int getEmpID() {
+        return EmpID;
     }
 
-    public void setID(int id) {
-        this.id = id;
+    public void setEmpID(int id) {
+        this.EmpID = EmpID;
     }
 
     public String getEmail() {
@@ -57,28 +64,65 @@ Employee {
         return  this.Name + ' ' + this.FamilyName;
     }
 
-    public int getDayOfBirth() {
-        return DayOfBirth;
+    public void setDate(Date Date) {
+        this.Date = Date;
     }
 
-    public void setDayOfBirth(int DayOfBirth) {
-        this.DayOfBirth = DayOfBirth;
+    public Date getDate() {
+        return  this.Date;
     }
 
-    public int getMonthOfBirth() {
-        return MonthOfBirth;
+//    public int getDayOfBirth() {
+//        return DayOfBirth;
+//    }
+//
+//    public void setDayOfBirth(int DayOfBirth) {
+//        this.DayOfBirth = DayOfBirth;
+//    }
+//
+//    public int getMonthOfBirth() {
+//        return MonthOfBirth;
+//    }
+//
+//    public void setMonthOfBirth(int MonthOfBirth) {
+//        this.MonthOfBirth = MonthOfBirth;
+//    }
+//
+//    public int getYearOfBirth() {
+//        return YearOfBirth;
+//    }
+//
+//    public void setYearOfBirth(int YearOfBirth) {
+//        this.YearOfBirth = YearOfBirth;
+//    }
+//
+//    public int getZP() {return YearOfBirth; }
+
+    public void setZP(int ZP) {
+        this.ZP = ZP;
     }
 
-    public void setMonthOfBirth(int MonthOfBirth) {
-        this.MonthOfBirth = MonthOfBirth;
+    @Override
+    public String toString() {
+        return "Employee{name='" + Name + " email=" + Email + "'}";
     }
 
-    public int getYearOfBirth() {
-        return YearOfBirth;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Employee emp = (Employee) o;
+
+        if (!Objects.equals(Email, emp.Email)) return false;
+        return true;
     }
 
-    public void setYearOfBirth(int YearOfBirth) {
-        this.YearOfBirth = YearOfBirth;
+    @Override
+    public int hashCode() {
+        int result = Email != null ? Email.hashCode() : 0;
+        result = 31 * result;
+        return result;
     }
 
 }

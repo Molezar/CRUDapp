@@ -13,11 +13,7 @@ public class DBWorker {
 
     public DBWorker() {
         try {
-//            Class.forName("com.mysql.jdbc.Driver");
-//            Driver driver = new FabricMySQLDriver();
-//            DriverManager.registerDriver(driver);
             DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-//            DriverManager.registerDriver(new Driver());
             connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
         } catch (SQLException e) {
             System.err.println("error");

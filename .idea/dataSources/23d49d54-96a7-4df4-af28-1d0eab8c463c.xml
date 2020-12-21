@@ -741,27 +741,68 @@
 </ObjectGrants>
     </user>
     <table id="232" parent="2" name="departments"/>
-    <column id="233" parent="232" name="id">
+    <table id="233" parent="2" name="employees"/>
+    <column id="234" parent="232" name="id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>null</SequenceIdentity>
     </column>
-    <column id="234" parent="232" name="name">
+    <column id="235" parent="232" name="name">
       <Position>2</Position>
       <DataType>varchar(45)|0s</DataType>
     </column>
-    <index id="235" parent="232" name="id_UNIQUE">
+    <index id="236" parent="232" name="id_UNIQUE">
       <ColNames>id</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="236" parent="232" name="PRIMARY">
+    <key id="237" parent="232" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="237" parent="232" name="id_UNIQUE">
+    <key id="238" parent="232" name="id_UNIQUE">
+      <ColNames>id</ColNames>
+      <UnderlyingIndexName>id_UNIQUE</UnderlyingIndexName>
+    </key>
+    <column id="239" parent="233" name="id">
+      <Position>1</Position>
+      <DataType>int(11)|0s</DataType>
+      <NotNull>1</NotNull>
+      <SequenceIdentity>null</SequenceIdentity>
+    </column>
+    <column id="240" parent="233" name="name">
+      <Position>2</Position>
+      <DataType>varchar(45)|0s</DataType>
+    </column>
+    <column id="241" parent="233" name="familyname">
+      <Position>3</Position>
+      <DataType>varchar(45)|0s</DataType>
+    </column>
+    <column id="242" parent="233" name="email">
+      <Position>4</Position>
+      <DataType>varchar(254)|0s</DataType>
+    </column>
+    <column id="243" parent="233" name="dateofbirth">
+      <Position>5</Position>
+      <DataType>date|0s</DataType>
+    </column>
+    <column id="244" parent="233" name="zp">
+      <Position>6</Position>
+      <DataType>int(7)|0s</DataType>
+    </column>
+    <index id="245" parent="233" name="id_UNIQUE">
+      <ColNames>id</ColNames>
+      <Unique>1</Unique>
+      <Type>btree</Type>
+    </index>
+    <key id="246" parent="233" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+    </key>
+    <key id="247" parent="233" name="id_UNIQUE">
       <ColNames>id</ColNames>
       <UnderlyingIndexName>id_UNIQUE</UnderlyingIndexName>
     </key>
