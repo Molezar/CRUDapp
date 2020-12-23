@@ -792,17 +792,21 @@
       <Position>6</Position>
       <DataType>int(7)|0s</DataType>
     </column>
-    <index id="245" parent="233" name="id_UNIQUE">
+    <column id="245" parent="233" name="depid">
+      <Position>7</Position>
+      <DataType>int(11)|0s</DataType>
+    </column>
+    <index id="246" parent="233" name="id_UNIQUE">
       <ColNames>id</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="246" parent="233" name="PRIMARY">
+    <key id="247" parent="233" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="247" parent="233" name="id_UNIQUE">
+    <key id="248" parent="233" name="id_UNIQUE">
       <ColNames>id</ColNames>
       <UnderlyingIndexName>id_UNIQUE</UnderlyingIndexName>
     </key>

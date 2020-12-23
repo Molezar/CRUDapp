@@ -13,12 +13,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.List;
 
 public class EmplistServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String id = req.getParameter("rDepId");
+
+
         EmpContext empContext = EmpContext.getInstance();
         List<Employee> emps = empContext.list();
         req.setAttribute("emps", emps);
@@ -31,8 +35,13 @@ public class EmplistServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String action = req.getParameter("action");
-        String id = req.getParameter("empId");
+        String id = req.getParameter("empID");
         String name = req.getParameter("empName");
+        String familyname = req.getParameter("empFamilyName");
+        String email = req.getParameter("empName");
+        String date = req.getParameter("empDate");
+        String zp = req.getParameter("ZP");
+        String depid = req.getParameter("depID");
 
         switch (action) {
             case "Delete":

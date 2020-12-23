@@ -45,6 +45,7 @@ public class ListServlet extends HttpServlet {
             case "Edit":
                 req.getRequestDispatcher("edit").forward(req, resp);
             case "Emplist":
+                req.setAttribute("rDepId", id);
                 req.getRequestDispatcher("emplist").forward(req, resp);
 
         }

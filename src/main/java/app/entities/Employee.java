@@ -2,6 +2,7 @@ package app.entities;
 
 import java.util.Objects;
 import java.util.Date;
+//import java.sql.Date;
 
 public class
 Employee {
@@ -10,19 +11,19 @@ Employee {
     private String FamilyName;
     private String Name;
     private Date Date;
-//    private int DayOfBirth;
-//    private int MonthOfBirth;
-//    private int YearOfBirth;
     private int ZP;
+    private int DepID;
 
 
-    public Employee(int EmpID,  String Name,  String FamilyName, String Email, Date Date,  int ZP) {
+    public Employee(int EmpID,  String Name,  String FamilyName, String Email, Date Date,  int ZP, int EDepID) {
+
         this.EmpID = EmpID;
         this.Email = Email;
         this.FamilyName = FamilyName;
         this.Name = Name;
         this.Date = Date;
         this.ZP = ZP;
+        this.DepID = DepID;
     }
 
     public Employee(){
@@ -72,35 +73,20 @@ Employee {
         return  this.Date;
     }
 
-//    public int getDayOfBirth() {
-//        return DayOfBirth;
-//    }
-//
-//    public void setDayOfBirth(int DayOfBirth) {
-//        this.DayOfBirth = DayOfBirth;
-//    }
-//
-//    public int getMonthOfBirth() {
-//        return MonthOfBirth;
-//    }
-//
-//    public void setMonthOfBirth(int MonthOfBirth) {
-//        this.MonthOfBirth = MonthOfBirth;
-//    }
-//
-//    public int getYearOfBirth() {
-//        return YearOfBirth;
-//    }
-//
-//    public void setYearOfBirth(int YearOfBirth) {
-//        this.YearOfBirth = YearOfBirth;
-//    }
-//
-//    public int getZP() {return YearOfBirth; }
+    public void setZP(int ZP) {this.ZP = ZP;}
 
-    public void setZP(int ZP) {
-        this.ZP = ZP;
+    public int getZP() {
+        return  this.ZP;
     }
+
+    public int getDepID() {
+        return DepID;
+    }
+
+    public void setDepID(int id) {
+        this.DepID = DepID;
+    }
+
 
     @Override
     public String toString() {

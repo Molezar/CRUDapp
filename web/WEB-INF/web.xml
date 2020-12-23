@@ -15,6 +15,17 @@
         <url-pattern>/add</url-pattern>
     </servlet-mapping>
 
+    <!--  empadd servlet -->
+    <servlet>
+        <servlet-name>empadd</servlet-name>
+        <servlet-class>app.servlets.EmpaddServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>empadd</servlet-name>
+        <url-pattern>/empadd</url-pattern>
+    </servlet-mapping>
+
     <!-- list servlet -->
     <servlet>
         <servlet-name>list</servlet-name>
