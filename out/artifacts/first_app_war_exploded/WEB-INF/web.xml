@@ -15,6 +15,17 @@
         <url-pattern>/add</url-pattern>
     </servlet-mapping>
 
+    <!--  empadd servlet -->
+    <servlet>
+        <servlet-name>empadd</servlet-name>
+        <servlet-class>app.servlets.EmpaddServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>empadd</servlet-name>
+        <url-pattern>/empadd</url-pattern>
+    </servlet-mapping>
+
     <!-- list servlet -->
     <servlet>
         <servlet-name>list</servlet-name>
@@ -26,6 +37,17 @@
         <url-pattern>/list</url-pattern>
     </servlet-mapping>
 
+    <!-- emplist servlet -->
+    <servlet>
+        <servlet-name>emplist</servlet-name>
+        <servlet-class>app.servlets.EmplistServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>emplist</servlet-name>
+        <url-pattern>/emplist</url-pattern>
+    </servlet-mapping>
+
     <!-- edit servlet -->
     <servlet>
         <servlet-name>edit</servlet-name>
@@ -35,6 +57,17 @@
     <servlet-mapping>
         <servlet-name>edit</servlet-name>
         <url-pattern>/edit</url-pattern>
+    </servlet-mapping>
+
+    <!-- empedit servlet -->
+    <servlet>
+        <servlet-name>empedit</servlet-name>
+        <servlet-class>app.servlets.EmpeditServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>empedit</servlet-name>
+        <url-pattern>/empedit</url-pattern>
     </servlet-mapping>
 
 </web-app>

@@ -6,7 +6,6 @@ import java.sql.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DepContext {
     private static DepContext instance = new DepContext();
@@ -45,9 +44,8 @@ public class DepContext {
 
     }
 
-    public String getNameById(int id) {
-        Department dep = department.get(id);
-        return dep.getDepName();
+    public Department findById(int id) {
+        return department.get(id);
     }
 
 
