@@ -69,7 +69,10 @@ public class EmpContext {
         return id;
     }
 
-    public List<Employee> list() {
+    public List<Employee> list(int id) {
+
+//        DBWorker worker = new DBWorker();
+
         // todo
         return employee;
     }

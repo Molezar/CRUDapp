@@ -20,11 +20,10 @@ public class EmplistServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         String id = req.getParameter("rDepId");
-
-
         EmpContext empContext = EmpContext.getInstance();
-        List<Employee> emps = empContext.list();
+        List<Employee> emps = empContext.list(Integer.parseInt(id));
         req.setAttribute("emps", emps);
 
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("views/emplist.jsp");

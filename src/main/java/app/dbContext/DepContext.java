@@ -137,11 +137,11 @@ public class DepContext {
                 int listId = dep.getDepID();
                 if (listId == id) {
                     String testname = dep.getDepName();
-                    boolean test = (testname.equals(newName));
-                            if (test!=false) {
+                            if ((testname.equals(newName))!=false) {
                                 return false;
                             }
-                    dep.setDepName(newName);
+//                    dep.setDepName(newName);
+                    department.get(i).setDepName(newName);
                     break;
                 }
                 i++;
