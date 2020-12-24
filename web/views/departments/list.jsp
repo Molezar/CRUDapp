@@ -1,7 +1,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="app.entities.Department" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <html>
 <head>
@@ -15,6 +15,9 @@
 </div>
 
 <div class="w3-container w3-center w3-margin-bottom w3-padding">
+
+    <a href="${pageContext.request.contextPath}/department">Add</a>
+
     <div class="w3-card-4">
         <div class="w3-container w3-light-blue">
             <h2>Departments</h2>
@@ -32,46 +35,39 @@
             }
         %>
         <table>
-        <c:forEach var="department" items="${requestScope.deps}">
-            <tr class="w3-panel w3-lightblue w3-card-4 w3-round">
-                <td class="w3-container w3-center w3-green w3-round-large w3-hover-blue w3-border w3-border-red">
-                        ${department.getDepName()}
-                </td>
+            <c:forEach var="department" items="${requestScope.deps}">
+                <tr class="w3-panel w3-lightblue w3-card-4 w3-round">
+                    <td class="w3-container w3-center w3-green w3-round-large w3-hover-blue w3-border w3-border-red">
+                            ${department.depName}
+                    </td>
 
-                <td class="w3-container w3-center">
-                    <form method="post">
-                        <input type="hidden" value="${department.getDepName()}" name="depName">
-                        <input type="hidden" value="${department.getDepID()}" name="depId">
-                        <input class="w3-button w3-blue w3-center
-                               w3-round-large w3-hover-red w3-border
-                               w3-border-blue w3-hover-border-grey"
-                               type="submit" value="Emplist" name="action">
-                    </form>
+                    <td class="w3-container w3-center">
+                        todo
+<%--                        <input class="w3-button w3-blue w3-center--%>
+<%--                               w3-round-large w3-hover-red w3-border--%>
+<%--                               w3-border-blue w3-hover-border-grey"--%>
+<%--                               type="submit" value="Emplist" name="action">--%>
+                    </td>
+                    <td class="w3-container w3-center">
+                        <a href="${pageContext.request.contextPath}/department?id=${department.depID}">Update</a>
+<%--                        <input class="w3-button w3-blue w3-center--%>
+<%--                               w3-round-large w3-hover-red w3-border--%>
+<%--                               w3-border-blue w3-hover-border-grey"--%>
+<%--                               type="submit" value="Edit" name="action">--%>
 
-                </td>
-                <td class="w3-container w3-center">
-                    <form method="post">
-                        <input type="hidden" value="${department.getDepName()}" name="depName">
-                        <input type="hidden" value="${department.getDepID()}" name="depId">
-                        <input class="w3-button w3-blue w3-center
-                               w3-round-large w3-hover-red w3-border
-                               w3-border-blue w3-hover-border-grey"
-                               type="submit" value="Edit" name="action">
-                    </form>
-
-                </td>
-                <td class="w3-container w3-center">
-                    <form method="post" class="w3-center">
-                        <input type="hidden" value="${department.getDepName()}" name="depName">
-                        <input type="hidden" value="${department.getDepID()}" name="depId">
-                        <input class="w3-button w3-blue
-                               w3-round-large w3-hover-red w3-border
-                               w3-border-blue w3-hover-border-grey"
-                               type="submit" value="Delete" name="action">
-                    </form>
-                </td>
-            </tr>
-        </c:forEach>
+                    </td>
+                    <td class="w3-container w3-center">
+                        <form method="post" class="w3-center" action="${pageContext.request.contextPath}/delete">
+                            <input type="hidden" value="${department.depID}" name="id">
+                            <button type="submit">Delete</button>
+<%--                            <input class="w3-button w3-blue--%>
+<%--                               w3-round-large w3-hover-red w3-border--%>
+<%--                               w3-border-blue w3-hover-border-grey"--%>
+<%--                                   type="submit" value="Delete" name="action">--%>
+                        </form>
+                    </td>
+                </tr>
+            </c:forEach>
         </table>
     </div>
 </div>

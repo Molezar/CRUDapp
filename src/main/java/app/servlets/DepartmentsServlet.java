@@ -4,7 +4,6 @@ import app.dbContext.DepContext;
 import app.entities.Department;
 import app.services.DepService;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,48 +15,71 @@ public class DepartmentsServlet extends HttpServlet {
     private DepContext depContext = DepContext.getInstance();
     private DepService depService = new DepService();
 
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uri = req.getRequestURI();
         switch (uri) {
             case "/list":
-                List<Department> deps = depContext.list();
-                req.setAttribute("deps", deps);
-                req.getRequestDispatcher("views/departments/list.jsp").forward(req, resp);
+                renderDepartmentsList(req, resp);
                 break;
             case "/department":
-                String idParameter = req.getParameter("id");
-                if (idParameter != null) {
-                    int id = Integer.parseInt(idParameter);
-                    Department department = depContext.findById(id);
-                    req.setAttribute("department", department);
-                }
-                req.getRequestDispatcher("views/departments/edit.jsp").forward(req, resp);
-
+                renderDepartment(req, resp);
                 break;
             default:
                 throw new IllegalArgumentException(uri + " is not supported here");
         }
     }
 
+
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String uri = req.getRequestURI();
         switch (uri) {
             case "/update":
-                List<Department> deps = depContext.list();
-                req.setAttribute("deps", deps);
-                req.getRequestDispatcher("views/departments/list.jsp").forward(req, resp);
+                createOrUpdateDepartment(req, resp);
                 break;
             case "/delete":
-                String idParameter = req.getParameter("id");
-                    int id = Integer.parseInt(idParameter);
-                    depService.remove(id);
-                    resp.sendRedirect("/list");
+                deleteDepartment(req, resp);
                 break;
             default:
                 throw new IllegalArgumentException(uri + " is not supported here");
         }
+    }
+
+    private void renderDepartmentsList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<Department> deps = depContext.list();
+        req.setAttribute("deps", deps);
+        req.getRequestDispatcher("views/departments/list.jsp").forward(req, resp);
+    }
+
+    private void renderDepartment(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String idParameter = req.getParameter("id");
+        if (idParameter != null) {
+            int id = Integer.parseInt(idParameter);
+            Department department = depContext.findById(id);
+            req.setAttribute("department", department);
+        }
+        req.getRequestDispatcher("views/departments/edit.jsp").forward(req, resp);
+    }
+
+    private void deleteDepartment(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String idParameter = req.getParameter("id");
+        int id = Integer.parseInt(idParameter);
+        depService.remove(id);
+        resp.sendRedirect("/list");
+    }
+
+    private void createOrUpdateDepartment(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String idParameter = req.getParameter("id");
+        String name = req.getParameter("name");
+        if (idParameter == null) {
+            depService.add(name);
+        } else {
+            int id = Integer.parseInt(idParameter);
+            depService.edit(id, name);
+        }
+        resp.sendRedirect("/list");
     }
 
 
