@@ -34,7 +34,7 @@
 
     <servlet-mapping>
         <servlet-name>departmentsServlet</servlet-name>
-        <url-pattern>/departments</url-pattern>
+        <url-pattern>/departments/*</url-pattern>
     </servlet-mapping>
 
     <!-- emplist servlet -->

@@ -1,4 +1,4 @@
-package app.dbContext;
+package app.dao;
 
 //import app.entities.User;
 //

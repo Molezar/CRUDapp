@@ -2,41 +2,41 @@ package app.services;
 
 import app.entities.Department;
 import app.extensions.StringExtension;
-import app.dbContext.DepContext;
+import app.dao.DepartmentDao;
 
 public class DepService {
-    private DepContext depContext = DepContext.getInstance();
+    private DepartmentDao departmentDao = DepartmentDao.getInstance();
 
 
     public boolean add(String name) {
         if (StringExtension.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("empty or null name");
         } else {
-            int lastid = depContext.getLastID();
+            int lastid = departmentDao.getLastID();
             int id = lastid + 1;
             app.entities.Department dep = new app.entities.Department(id, name);
-            return depContext.add(dep);
+            return departmentDao.add(dep);
         }
     }
 
     public void remove(int id) {
-        DepContext depContext = DepContext.getInstance();
-        depContext.remove(id);
+        DepartmentDao departmentDao = DepartmentDao.getInstance();
+        departmentDao.remove(id);
     }
 
     public boolean edit(int id, String newName) {
         if (StringExtension.isNullOrEmpty(newName)) {
             throw new IllegalArgumentException("empty or null name");
         } else {
-            DepContext depContext = DepContext.getInstance();
+            DepartmentDao departmentDao = DepartmentDao.getInstance();
             boolean test;
-            test = depContext.edit(id, newName);
+            test = departmentDao.edit(id, newName);
             return test;
         }
     }
 
 
     public Department findById(int id) {
-        return depContext.findById(id);
+        return departmentDao.findById(id);
     }
 }
