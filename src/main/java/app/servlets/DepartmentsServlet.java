@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class DepartmentsServlet extends HttpServlet {
-    private DepartmentDao departmentDao = DepartmentDao.getInstance();
+    private DepartmentDao departmentDao = new DepartmentDao();
     private DepService depService = new DepService();
 
 
@@ -44,11 +44,6 @@ public class DepartmentsServlet extends HttpServlet {
             case "/departments/update":
                 createOrUpdateDepartment(req, resp);
                 break;
-
-
-//            case "/departments/delete":
-//                deleteDepartment(req, resp);
-//                break;
             default:
                 throw new IllegalArgumentException(uri + " is not supported here");
         }
@@ -56,7 +51,6 @@ public class DepartmentsServlet extends HttpServlet {
 
 
     private void renderDepartmentsList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         List<Department> deps = departmentDao.list();
         req.setAttribute("deps", deps);
         req.getRequestDispatcher("/views/departments/list.jsp").forward(req, resp);
@@ -66,17 +60,21 @@ public class DepartmentsServlet extends HttpServlet {
         String idParameter = req.getParameter("id");
         if (idParameter != null && !"".equals(idParameter)) {
             int id = Integer.parseInt(idParameter);
-            Department department = departmentDao.findById(id);
+            depService.list();
+            Department department = depService.findById(id);
             req.setAttribute("department", department);
         }
         req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
     }
 
-    private void deleteDepartment(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void deleteDepartment(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String idParameter = req.getParameter("id");
+        Department department = depService.findById(Integer.parseInt(idParameter));
+        String name = department.getDepName();
         int id = Integer.parseInt(idParameter);
         depService.remove(id);
-        resp.sendRedirect("/departments/list");
+        req.setAttribute("depName", name);
+        req.getRequestDispatcher("/departments/list").forward(req, resp);
     }
 
     private void createOrUpdateDepartment(HttpServletRequest req, HttpServletResponse resp) throws IOException {

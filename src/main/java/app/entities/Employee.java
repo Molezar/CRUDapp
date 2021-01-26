@@ -15,7 +15,7 @@ Employee {
     private int DepID;
 
 
-    public Employee(int EmpID,  String Name,  String FamilyName, String Email, Date Date,  int ZP, int EDepID) {
+    public Employee(int EmpID,  String Name,  String FamilyName, String Email, Date Date,  int ZP, int DepID) {
 
         this.EmpID = EmpID;
         this.Email = Email;
@@ -25,6 +25,20 @@ Employee {
         this.ZP = ZP;
         this.DepID = DepID;
     }
+    public Employee( String Name,  String FamilyName, String Email, Date Date,  int ZP, int DepID) {
+
+        this.Email = Email;
+        this.FamilyName = FamilyName;
+        this.Name = Name;
+        this.Date = Date;
+        this.ZP = ZP;
+        this.DepID = DepID;
+    }
+
+    public Employee( String Name ) {
+        this.Name = Name;
+    }
+
 
     public Employee(){
     }

@@ -16,6 +16,10 @@ public class Department {
         this.DepName = DepName;
     }
 
+    public Department(String DepName) {
+        this.DepName = DepName;
+    }
+
     public int getDepID() { return DepID; }
 
 //    public void setDepID(int DepName) {

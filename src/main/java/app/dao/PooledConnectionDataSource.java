@@ -16,7 +16,6 @@ class PooledConnectionDataSource extends AbstractConnectionDataSource{
             ds.setUrl(URL);
             ds.setUsername(USERNAME);
             ds.setPassword(PASSWORD);
-
             ds.setMinIdle(5);
             ds.setMaxIdle(10);
             ds.setMaxOpenPreparedStatements(100);

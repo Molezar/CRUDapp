@@ -43,7 +43,7 @@
                     </td>
 
                     <td class="w3-container w3-center">
-                        todo
+                        <a href="${pageContext.request.contextPath}/employees/list?id=${department.depID}">Employee List</a>
 <%--                        <input class="w3-button w3-blue w3-center--%>
 <%--                               w3-round-large w3-hover-red w3-border--%>
 <%--                               w3-border-blue w3-hover-border-grey"--%>
