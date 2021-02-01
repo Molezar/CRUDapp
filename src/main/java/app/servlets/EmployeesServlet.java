@@ -13,7 +13,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
+import java.text.SimpleDateFormat;
 
 public class EmployeesServlet extends HttpServlet {
     private EmployeeDao employeeDao = new EmployeeDao();
@@ -39,15 +42,19 @@ public class EmployeesServlet extends HttpServlet {
                 throw new IllegalArgumentException(uri + " is not supported here");
         }
     }
-
-
-
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String uri = req.getRequestURI();
         switch (uri) {
+            case "/employees/list":
+                renderEmployeesList(req, resp);
+                break;
             case "/employees/update":
-                createOrUpdateEmployee(req, resp);
+                try {
+                    createOrUpdateEmployee(req, resp);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 break;
             default:
                 throw new IllegalArgumentException(uri + " is not supported here");
@@ -58,11 +65,10 @@ public class EmployeesServlet extends HttpServlet {
     private void renderEmployeesList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String depid = req.getParameter("id");
-        Department dep = depService.findById(Integer.parseInt(depid));
         int id = Integer.parseInt(depid);
+        Department dep = depService.findById(id);
         req.setAttribute("dep", dep);
-
-        List<Employee> emps = employeeDao.list(id);
+        List<Employee> emps = empService.list(id);
         req.setAttribute("emps", emps);
         req.getRequestDispatcher("/views/employees/list.jsp").forward(req, resp);
     }
@@ -77,6 +83,7 @@ public class EmployeesServlet extends HttpServlet {
             Employee employee = empService.findById(id);
             req.setAttribute("employee", employee);
         }
+        req.setAttribute("depid", depid);
         req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
     }
 
@@ -90,17 +97,21 @@ public class EmployeesServlet extends HttpServlet {
         req.getRequestDispatcher("/employees/list").forward(req, resp);
     }
 
-    private void createOrUpdateEmployee(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private void createOrUpdateEmployee(HttpServletRequest req, HttpServletResponse resp) throws IOException, ParseException, ServletException {
         String idParameter = req.getParameter("id");
         String name = req.getParameter("name");
+        String familyname = req.getParameter("familyname");
+        String email = req.getParameter("email");
+        String date = req.getParameter("date");
+        Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        String zp = req.getParameter("zp");
         String depid = req.getParameter("depid");
-
+        
         if (idParameter == null || "".equals(idParameter)) {
-            empService.add(name);
+            empService.add(name, familyname, email, date1, Integer.parseInt(zp), Integer.parseInt(depid));
         } else {
-            int id = Integer.parseInt(idParameter);
-            empService.edit(id, name, Integer.parseInt(idParameter));
+            empService.edit(Integer.parseInt(idParameter), name, familyname, email, date1, Integer.parseInt(zp), Integer.parseInt(depid));
         }
-        resp.sendRedirect("/employees/list");
+        req.getRequestDispatcher("/employees/list").forward(req, resp);
     }
 }

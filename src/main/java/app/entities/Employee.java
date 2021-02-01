@@ -16,27 +16,26 @@ Employee {
 
 
     public Employee(int EmpID,  String Name,  String FamilyName, String Email, Date Date,  int ZP, int DepID) {
-
         this.EmpID = EmpID;
-        this.Email = Email;
-        this.FamilyName = FamilyName;
         this.Name = Name;
+        this.FamilyName = FamilyName;
+        this.Email = Email;
         this.Date = Date;
         this.ZP = ZP;
         this.DepID = DepID;
     }
     public Employee( String Name,  String FamilyName, String Email, Date Date,  int ZP, int DepID) {
-
-        this.Email = Email;
-        this.FamilyName = FamilyName;
         this.Name = Name;
+        this.FamilyName = FamilyName;
+        this.Email = Email;
         this.Date = Date;
         this.ZP = ZP;
         this.DepID = DepID;
     }
 
-    public Employee( String Name ) {
+    public Employee( String Name, int DepID ) {
         this.Name = Name;
+        this.DepID = DepID;
     }
 
 

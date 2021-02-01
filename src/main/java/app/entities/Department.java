@@ -22,10 +22,6 @@ public class Department {
 
     public int getDepID() { return DepID; }
 
-//    public void setDepID(int DepName) {
-//        this.DepID = DepID;
-//    }
-
     public String getDepName() {
         return DepName;
     }

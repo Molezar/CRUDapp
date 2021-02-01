@@ -19,7 +19,6 @@ public class DepartmentDao extends AbstractDao {
 
 
     public DepartmentDao() {
-
     }
 
     public Department findById(int id) {
@@ -30,13 +29,27 @@ public class DepartmentDao extends AbstractDao {
             res.next();
             String name = res.getString("name");
             return new Department(id, name);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
 
-    public static List<Department> list() {
+    private void namechecker (Department dep) {
+        DepartmentDao departmentDao = new DepartmentDao();
+        List<Department> department = departmentDao.list();
+        int k = 0;
+        while (k < department.size()) {
+            Department kdep = department.get(k);
+            if (dep.equals(kdep)) {
+                throw new IllegalArgumentException("this name already exists");
+            }
+            k++;
+        }
+    }
+
+
+    public List<Department> list() {
         ArrayList<Department> department = new ArrayList<>();
         try {
             preparedStatement = getConnection().prepareStatement(GETALLDEPS);
@@ -53,16 +66,12 @@ public class DepartmentDao extends AbstractDao {
     }
 
 
-    public boolean add(Department dep) {
-        try {
-            preparedStatement = getConnection().prepareStatement(INSERT_NEW);
-            preparedStatement.setString(1, dep.getDepName());
-            preparedStatement.execute();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public boolean add(Department dep) throws SQLException {
+        namechecker(dep);
+        preparedStatement = getConnection().prepareStatement(INSERT_NEW);
+        preparedStatement.setString(1, dep.getDepName());
+        preparedStatement.execute();
+        return true;
     }
 
     public void remove(int id) {
@@ -75,16 +84,18 @@ public class DepartmentDao extends AbstractDao {
         }
     }
 
-    public boolean edit(int id, String newName) {
-        try {
-            preparedStatement = getConnection().prepareStatement(UPDATE);
-            preparedStatement.setString(1, newName);
-            preparedStatement.setInt(2, id);
-            preparedStatement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+    public boolean edit(int id, Department dep) throws SQLException {
+        DepartmentDao departmentDao = new DepartmentDao();
+        Department olddep = departmentDao.findById(id);
+        if (dep.getDepName().equals(olddep.getDepName())) {
+            throw new IllegalArgumentException("this is the same name");
         }
+        namechecker(dep);
+
+        preparedStatement = getConnection().prepareStatement(UPDATE);
+        preparedStatement.setString(1, dep.getDepName());
+        preparedStatement.setInt(2, id);
+        preparedStatement.executeUpdate();
+        return true;
     }
 }

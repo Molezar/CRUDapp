@@ -4,29 +4,6 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
-    <!--  add servlet -->
-<!--    <servlet>-->
-<!--        <servlet-name>add</servlet-name>-->
-<!--        <servlet-class>app.servlets.AddServlet</servlet-class>-->
-<!--    </servlet>-->
-
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>add</servlet-name>-->
-<!--        <url-pattern>/add</url-pattern>-->
-<!--    </servlet-mapping>-->
-
-    <!--  empadd servlet -->
-<!--    <servlet>-->
-<!--        <servlet-name>empadd</servlet-name>-->
-<!--        <servlet-class>app.servlets.EmpaddServlet</servlet-class>-->
-<!--    </servlet>-->
-
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>empadd</servlet-name>-->
-<!--        <url-pattern>/empadd</url-pattern>-->
-<!--    </servlet-mapping>-->
-
-    <!-- Deplist servlet -->
     <servlet>
         <servlet-name>departmentsServlet</servlet-name>
         <servlet-class>app.servlets.DepartmentsServlet</servlet-class>
@@ -47,38 +24,4 @@
         <servlet-name>employeesServlet</servlet-name>
         <url-pattern>/employees/*</url-pattern>
     </servlet-mapping>
-
-    <!-- emplist servlet -->
-<!--    <servlet>-->
-<!--        <servlet-name>emplist</servlet-name>-->
-<!--        <servlet-class>app.servlets.EmplistServlet</servlet-class>-->
-<!--    </servlet>-->
-
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>emplist</servlet-name>-->
-<!--        <url-pattern>/emplist</url-pattern>-->
-<!--    </servlet-mapping>-->
-
-    <!-- edit servlet -->
-<!--    <servlet>-->
-<!--        <servlet-name>edit</servlet-name>-->
-<!--        <servlet-class>app.servlets.EditServlet</servlet-class>-->
-<!--    </servlet>-->
-
-<!--    <servlet-mapping>-->
-<!--        <servlet-name>edit</servlet-name>-->
-<!--        <url-pattern>/edit</url-pattern>-->
-<!--    </servlet-mapping>-->
-
-    <!-- empedit servlet -->
-    <servlet>
-        <servlet-name>empedit</servlet-name>
-        <servlet-class>app.servlets.EmpeditServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>empedit</servlet-name>
-        <url-pattern>/empedit</url-pattern>
-    </servlet-mapping>
-
 </web-app>

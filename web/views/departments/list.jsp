@@ -16,25 +16,41 @@
 
 <div class="w3-container w3-center w3-margin-bottom w3-padding">
 
-    <a href="${pageContext.request.contextPath}/departments/department" class="w3-button w3-blue w3-center w3-round-large w3-hover-red w3-border w3-border-blue w3-hover-border-grey">Add</a>
-
+    <a href="${pageContext.request.contextPath}/departments/department"
+       class="w3-button w3-blue w3-center w3-round-large w3-hover-red w3-border w3-border-blue w3-hover-border-grey">Add</a>
 
     <div class="w3-card-4">
         <div class="w3-container w3-light-blue">
             <h2>Departments</h2>
         </div>
 
-        <%
-            String depName = (String) request.getAttribute("depName");
+        <c:set var="newDepName" value="${requestScope.newDepName}"/>
+        <c:if test="${newDepName != null}">
+            <div class="w3-panel w3-green w3-display-container w3-card-4 w3-round">
+                <span onclick="this.parentElement.style.display='none'"
+                      class="w3-button w3-margin-right w3-display-right w3-round-large w3-hover-green w3-border w3-border-green w3-hover-border-grey">×</span>
+                <h5>Department: <c:out value="${newDepName}"/> has been added successfully!</h5>
+            </div>
+        </c:if>
 
-            if (depName != null) {
-                out.println("<div class=\"w3-panel w3-green w3-display-container w3-card-4 w3-round\">\n" +
-                        "   <span onclick=\"this.parentElement.style.display='none'\"\n" +
-                        "   class=\"w3-button w3-margin-right w3-display-right w3-round-large w3-hover-green w3-border w3-border-green w3-hover-border-grey\">×</span>\n" +
-                        "   <h5>Department '" + request.getAttribute("depName") + "' has been removed!</h5>\n" +
-                        "</div>");
-            }
-        %>
+        <c:set var="editedDepName" value="${requestScope.editedDepName}"/>
+        <c:if test="${editedDepName != null}">
+            <div class="w3-panel w3-green w3-display-container w3-card-4 w3-round">
+                <span onclick="this.parentElement.style.display='none'"
+                      class="w3-button w3-margin-right w3-display-right w3-round-large w3-hover-green w3-border w3-border-green w3-hover-border-grey">×</span>
+                <h5>Department: <c:out value="${editedDepName}"/> has been edited successfully!</h5>
+            </div>
+        </c:if>
+
+        <c:set var="department" value="${requestScope.department}"/>
+        <c:if test="${department.depName != null}">
+            <div class="w3-panel w3-green w3-display-container w3-card-4 w3-round">
+                <span onclick="this.parentElement.style.display='none'"
+                      class="w3-button w3-margin-right w3-display-right w3-round-large w3-hover-green w3-border w3-border-green w3-hover-border-grey">×</span>
+                <h5>Department: <c:out value="${department.depName}"/> has been removed successfully!</h5>
+            </div>
+        </c:if>
+
         <table>
             <c:forEach var="department" items="${requestScope.deps}">
                 <tr class="w3-panel w3-lightblue w3-card-4 w3-round">
@@ -43,33 +59,14 @@
                     </td>
 
                     <td class="w3-container w3-center">
-                        <a href="${pageContext.request.contextPath}/employees/list?id=${department.depID}">Employee List</a>
-<%--                        <input class="w3-button w3-blue w3-center--%>
-<%--                               w3-round-large w3-hover-red w3-border--%>
-<%--                               w3-border-blue w3-hover-border-grey"--%>
-<%--                               type="submit" value="Emplist" name="action">--%>
+                        <a href="${pageContext.request.contextPath}/employees/list?id=${department.depID}">Employee
+                            List</a>
                     </td>
                     <td class="w3-container w3-center">
                         <a href="${pageContext.request.contextPath}/departments/department?id=${department.depID}">Update</a>
-<%--                        <input class="w3-button w3-blue w3-center--%>
-<%--                               w3-round-large w3-hover-red w3-border--%>
-<%--                               w3-border-blue w3-hover-border-grey"--%>
-<%--                               type="submit" value="Edit" name="action">--%>
-
                     </td>
                     <td class="w3-container w3-center">
                         <a href="${pageContext.request.contextPath}/departments/delete?id=${department.depID}">Delete</a>
-
-<%--                    <td class="w3-container w3-center">--%>
-<%--                        <form method="post" class="w3-center" action="${pageContext.request.contextPath}/departments/delete">--%>
-<%--                            <input type="hidden" value="${department.depID}" name="id">--%>
-<%--                            <button type="submit">Delete</button>--%>
-
-<%--                            <input class="w3-button w3-blue--%>
-<%--                               w3-round-large w3-hover-red w3-border--%>
-<%--                               w3-border-blue w3-hover-border-grey"--%>
-<%--                                   type="submit" value="Delete" name="action">--%>
-<%--                        </form>--%>
                     </td>
                 </tr>
             </c:forEach>

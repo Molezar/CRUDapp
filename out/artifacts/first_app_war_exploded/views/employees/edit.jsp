@@ -1,4 +1,5 @@
 <%@ page import="java.util.List" %>
+<%@ page import="app.entities.Department" %>
 <%@ page import="app.entities.Employee" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -16,14 +17,31 @@
 
 
 <div>
+    <c:set  var="depid" value="${requestScope.depid}"/>
     <form method="post" action="${pageContext.request.contextPath}/employees/update">
-        <input type="hidden" value="${employee.empID}" name="id"/>
-        <input type="text" value="${employees.empName}" name="name"/>
+
+        <input type="text" value="${depid}" name="depid"/>
+        <input type="text" value="${employee.empID}" name="id"/>
+        <p>&nbsp Name
+        <input type="text" minlength="2" maxlength="32" pattern="[A-Za-z]{2,32}" value="${employee.name}" required name="name"/>
+        </p>
+        <p>&nbsp Family Name
+        <input type="text" value="${employee.familyName}" name="familyname"/>
+        </p>
+        <p>&nbsp Email
+        <input type="email" value="${employee.email}" name="email"/>
+        </p>
+        <p>&nbsp Date
+        <input type="date" value="${employee.date}" name="date"/>
+        </p>
+        <p>&nbsp ZP
+        <input type="number" min="10000" value="${employee.ZP}" name="zp"/>
+        </p>
         <button type="submit">Submit</button>
     </form>
 </div>
-
-
-
+<div class="w3-container w3-grey w3-opacity w3-right-align w3-padding">
+    <button class="w3-btn w3-round-large" onclick="location.href='../employees/list?id=${depid}'">Back to employees</button>
+</div>
 </body>
 </html>
