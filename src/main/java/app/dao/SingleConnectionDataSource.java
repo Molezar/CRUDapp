@@ -1,6 +1,5 @@
 package app.dao;
 
-
 import java.sql.*;
 
 class SingleConnectionDataSource extends AbstractConnectionDataSource {

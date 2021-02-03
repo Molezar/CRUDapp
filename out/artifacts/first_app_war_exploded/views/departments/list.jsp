@@ -1,5 +1,5 @@
-<%@ page import="java.util.List" %>
-<%@ page import="app.entities.Department" %>
+<%--<%@ page import="java.util.List" %>--%>
+<%--<%@ page import="app.entities.Department" %>--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -23,6 +23,12 @@
         <div class="w3-container w3-light-blue">
             <h2>Departments</h2>
         </div>
+
+        <c:if test="${errors != null}">
+        <span class="error" style="color:#ff0000">>
+          &nbsp Issue occured:  ${errors.name} <br><br>
+        </span>
+        </c:if>
 
         <c:set var="newDepName" value="${requestScope.newDepName}"/>
         <c:if test="${newDepName != null}">
@@ -59,7 +65,7 @@
                     </td>
 
                     <td class="w3-container w3-center">
-                        <a href="${pageContext.request.contextPath}/employees/list?id=${department.depID}">Employee
+                        <a href="${pageContext.request.contextPath}/employees/list?depid=${department.depID}">Employee
                             List</a>
                     </td>
                     <td class="w3-container w3-center">

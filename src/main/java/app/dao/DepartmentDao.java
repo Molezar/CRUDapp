@@ -21,21 +21,17 @@ public class DepartmentDao extends AbstractDao {
     public DepartmentDao() {
     }
 
-    public Department findById(int id) {
-        try {
-            preparedStatement = getConnection().prepareStatement(GETBYID);
-            preparedStatement.setInt(1, id);
-            ResultSet res = preparedStatement.executeQuery();
-            res.next();
-            String name = res.getString("name");
-            return new Department(id, name);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public Department findById(int id) throws SQLException {
+
+        preparedStatement = getConnection().prepareStatement(GETBYID);
+        preparedStatement.setInt(1, id);
+        ResultSet res = preparedStatement.executeQuery();
+        res.next();
+        String name = res.getString("name");
+        return new Department(id, name);
     }
 
-    private void namechecker (Department dep) {
+    private void namechecker(Department dep) throws SQLException {
         DepartmentDao departmentDao = new DepartmentDao();
         List<Department> department = departmentDao.list();
         int k = 0;
@@ -49,18 +45,14 @@ public class DepartmentDao extends AbstractDao {
     }
 
 
-    public List<Department> list() {
+    public List<Department> list() throws SQLException {
         ArrayList<Department> department = new ArrayList<>();
-        try {
-            preparedStatement = getConnection().prepareStatement(GETALLDEPS);
-            ResultSet res = preparedStatement.executeQuery();
-            while (res.next()) {
-                int id = res.getInt("id");
-                String name = res.getString("name");
-                department.add(new Department(id, name));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        preparedStatement = getConnection().prepareStatement(GETALLDEPS);
+        ResultSet res = preparedStatement.executeQuery();
+        while (res.next()) {
+            int id = res.getInt("id");
+            String name = res.getString("name");
+            department.add(new Department(id, name));
         }
         return department;
     }
@@ -74,14 +66,10 @@ public class DepartmentDao extends AbstractDao {
         return true;
     }
 
-    public void remove(int id) {
-        try {
-            preparedStatement = getConnection().prepareStatement(DELETE);
-            preparedStatement.setInt(1, id);
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void remove(int id) throws SQLException {
+        preparedStatement = getConnection().prepareStatement(DELETE);
+        preparedStatement.setInt(1, id);
+        preparedStatement.execute();
     }
 
     public boolean edit(int id, Department dep) throws SQLException {

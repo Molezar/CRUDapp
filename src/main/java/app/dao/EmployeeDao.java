@@ -1,6 +1,5 @@
 package app.dao;
 
-import app.entities.Department;
 import app.entities.Employee;
 
 import java.sql.*;
@@ -25,8 +24,8 @@ public class EmployeeDao extends AbstractDao {
 
     }
 
-    public Employee findById(int id) {
-        try {
+    public Employee findById(int id) throws SQLException {
+
             preparedStatement = getConnection().prepareStatement(GETBYID);
             preparedStatement.setInt(1, id);
             ResultSet res = preparedStatement.executeQuery();
@@ -39,115 +38,89 @@ public class EmployeeDao extends AbstractDao {
             int zp = res.getInt("zp");
             int depId = res.getInt("depid");
             return new Employee(eid, name, familyName, email, date, zp, depId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
-    private void empchecker(Employee emp) {
+    private void empchecker(Employee emp) throws SQLException {
         EmployeeDao employeeDao = new EmployeeDao();
         List<Employee> employee = employeeDao.list();
-        int k=0;
+        int k = 0;
         while (k < employee.size()) {
             Employee kemp = employee.get(k);
             if (emp.equals(kemp)) {
-                throw new IllegalArgumentException("this employee already exists");
+                throw new IllegalArgumentException("email");
             }
             k++;
         }
     }
 
-    public  List<Employee> list() {
+    public List<Employee> list() throws SQLException {
         ArrayList<Employee> employee = new ArrayList<>();
-        try {
-            preparedStatement = getConnection().prepareStatement(GETALLEMPS);
-            ResultSet res = preparedStatement.executeQuery();
-            while (res.next()) {
-                int id = res.getInt("id");
-                String name = res.getString("name");
-                String familyName = res.getString("familyname");
-                String email = res.getString("email");
-                Date date = res.getDate("dateofbirth");
-                int zp = res.getInt("zp");
-                int depId = res.getInt("depid");
+        preparedStatement = getConnection().prepareStatement(GETALLEMPS);
+        ResultSet res = preparedStatement.executeQuery();
+        while (res.next()) {
+            int id = res.getInt("id");
+            String name = res.getString("name");
+            String familyName = res.getString("familyname");
+            String email = res.getString("email");
+            Date date = res.getDate("dateofbirth");
+            int zp = res.getInt("zp");
+            int depId = res.getInt("depid");
 
-                employee.add(new Employee(id, name, familyName, email, date, zp, depId));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            employee.add(new Employee(id, name, familyName, email, date, zp, depId));
         }
         return employee;
     }
-    public  List<Employee> list(int depid) {
+
+    public List<Employee> list(int depid) throws SQLException {
         ArrayList<Employee> employee = new ArrayList<>();
-        try {
-            preparedStatement = getConnection().prepareStatement(GETEMPS);
-            preparedStatement.setInt(1, depid);
-            ResultSet res = preparedStatement.executeQuery();
-            while (res.next()) {
-                int id = res.getInt("id");
-                String name = res.getString("name");
-                String familyName = res.getString("familyname");
-                String email = res.getString("email");
-                Date date = res.getDate("dateofbirth");
-                int zp = res.getInt("zp");
-                int depId = res.getInt("depid");
-                employee.add(new Employee(id, name, familyName, email, date, zp, depId));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        preparedStatement = getConnection().prepareStatement(GETEMPS);
+        preparedStatement.setInt(1, depid);
+        ResultSet res = preparedStatement.executeQuery();
+        while (res.next()) {
+            int id = res.getInt("id");
+            String name = res.getString("name");
+            String familyName = res.getString("familyname");
+            String email = res.getString("email");
+            Date date = res.getDate("dateofbirth");
+            int zp = res.getInt("zp");
+            int depId = res.getInt("depid");
+            employee.add(new Employee(id, name, familyName, email, date, zp, depId));
         }
         return employee;
     }
 
 
-    public boolean add(Employee emp) {
+    public boolean add(Employee emp) throws SQLException {
         empchecker(emp);
-        try {
-            preparedStatement = getConnection().prepareStatement(INSERT_NEW);
-            preparedStatement.setString(1, emp.getName());
-            preparedStatement.setString(2, emp.getFamilyName());
-            preparedStatement.setString(3, emp.getEmail());
-            java.sql.Date sqlDate = new java.sql.Date(emp.getDate().getTime());
-            preparedStatement.setDate(4, sqlDate);
-            preparedStatement.setInt(5, emp.getZP());
-            preparedStatement.setInt(6, emp.getDepID());
-            preparedStatement.execute();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+        preparedStatement = getConnection().prepareStatement(INSERT_NEW);
+        preparedStatement.setString(1, emp.getName());
+        preparedStatement.setString(2, emp.getFamilyName());
+        preparedStatement.setString(3, emp.getEmail());
+        java.sql.Date sqlDate = new java.sql.Date(emp.getDate().getTime());
+        preparedStatement.setDate(4, sqlDate);
+        preparedStatement.setInt(5, emp.getZP());
+        preparedStatement.setInt(6, emp.getDepID());
+        preparedStatement.execute();
+        return true;
     }
 
-    public void remove(int id) {
-        try {
-            preparedStatement = getConnection().prepareStatement(DELETE);
-            preparedStatement.setInt(1, id);
-            preparedStatement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void remove(int id) throws SQLException {
+        preparedStatement = getConnection().prepareStatement(DELETE);
+        preparedStatement.setInt(1, id);
+        preparedStatement.execute();
     }
 
-    public boolean edit(int id, Employee emp) {
-        try {
-            preparedStatement = getConnection().prepareStatement(UPDATE);
-            preparedStatement.setString(1, emp.getName());
-            preparedStatement.setString(2, emp.getFamilyName());
-            preparedStatement.setString(3, emp.getEmail());
-            java.sql.Date sqlDate = new java.sql.Date(emp.getDate().getTime());
-            preparedStatement.setDate(4, sqlDate);
-            preparedStatement.setInt(5, emp.getZP());
-            preparedStatement.setInt(6, emp.getDepID());
-            preparedStatement.setInt(7, id);
-
-            preparedStatement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+    public boolean edit(int id, Employee emp) throws SQLException {
+        preparedStatement = getConnection().prepareStatement(UPDATE);
+        preparedStatement.setString(1, emp.getName());
+        preparedStatement.setString(2, emp.getFamilyName());
+        preparedStatement.setString(3, emp.getEmail());
+        java.sql.Date sqlDate = new java.sql.Date(emp.getDate().getTime());
+        preparedStatement.setDate(4, sqlDate);
+        preparedStatement.setInt(5, emp.getZP());
+        preparedStatement.setInt(6, emp.getDepID());
+        preparedStatement.setInt(7, id);
+        preparedStatement.executeUpdate();
+        return true;
     }
 }

@@ -18,6 +18,8 @@ import java.util.Map;
 public class DepartmentsServlet extends HttpServlet {
     private DepService depService = new DepService();
     private RegexService regex = new RegexService();
+    private Map<String, String> errors = new HashMap<>();
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -56,8 +58,15 @@ public class DepartmentsServlet extends HttpServlet {
 
 
     private void renderDepartmentsList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Department> deps = depService.list();
-        req.setAttribute("deps", deps);
+        try {
+            List<Department> deps = depService.list();
+            req.setAttribute("deps", deps);
+        } catch (SQLException ex) {
+            errors.put("name", ex.getMessage());
+            req.setAttribute("errors", errors);
+            req.getRequestDispatcher("/views/departments/list.jsp").forward(req, resp);
+            return;
+        }
         req.getRequestDispatcher("/views/departments/list.jsp").forward(req, resp);
     }
 
@@ -65,78 +74,105 @@ public class DepartmentsServlet extends HttpServlet {
         String idParameter = req.getParameter("id");
         if (idParameter != null && !"".equals(idParameter)) {
             int id = Integer.parseInt(idParameter);
-            depService.list();
-            Department department = depService.findById(id);
-            req.setAttribute("department", department);
+            try {
+                depService.list();
+                Department department = depService.findById(id);
+                req.setAttribute("department", department);
+            } catch (SQLException ex) {
+                errors.put("name", ex.getMessage());
+                req.setAttribute("errors", errors);
+                req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
+                return;
+            }
         }
         req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
     }
 
     private void deleteDepartment(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String idParameter = req.getParameter("id");
-        Department department = depService.findById(Integer.parseInt(idParameter));
         int id = Integer.parseInt(idParameter);
-        depService.remove(id);
-        req.setAttribute("department", department);
+        try {
+            Department department = depService.findById(Integer.parseInt(idParameter));
+            depService.remove(id);
+            req.setAttribute("department", department);
+        } catch (SQLException ex) {
+            errors.put("name", ex.getMessage());
+            req.setAttribute("errors", errors);
+            req.getRequestDispatcher("/departments/list").forward(req, resp);
+            return;
+        }
         req.getRequestDispatcher("/departments/list").forward(req, resp);
     }
 
     private void createOrUpdateDepartment(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        Map<String, String> errors = new HashMap<String, String>();
-
         String idParameter = req.getParameter("id");
         String name = req.getParameter("name");
 
+        if (idParameter == null || "".equals(idParameter)) {
             if (name == null || name == "" || !regex.match(1, name)) {
                 errors.put("name", "Name is empty or doesn't match minimal requirements");
-
                 req.setAttribute("errors", errors);
-                int id = Integer.parseInt(idParameter);
-                Department department = depService.findById(id);
-                req.setAttribute("department", department);
                 req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
                 return;
             }
-
-
-            if (idParameter == null || "".equals(idParameter)) {
-                try {
-                    depService.add(name);
-                } catch (SQLException e) {
-                    String sqlerror = e.getMessage();
-                    errors.put("name", sqlerror);
-                    req.setAttribute("errors", errors);
-                    req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
-                    return;
-                } catch (IllegalArgumentException ex) {
-                    errors.put("name", ex.getMessage());
-                    req.setAttribute("errors", errors);
-                    req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
-                    return;
-                }
-                req.setAttribute("newDepName", name);
-            } else {
-                int id = Integer.parseInt(idParameter);
-                try {
-                    depService.edit(id, name);
-                } catch (SQLException e) {
-                    String sqlerror = e.getMessage();
-                    errors.put("name", sqlerror);
-                    req.setAttribute("errors", errors);
-                    Department department = depService.findById(id);
-                    req.setAttribute("department", department);
-                    req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
-                    return;
-                } catch (IllegalArgumentException ex) {
-                    errors.put("name", ex.getMessage());
-                    req.setAttribute("errors", errors);
-                    Department department = depService.findById(id);
-                    req.setAttribute("department", department);
-                    req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
-                    return;
-                }
-                req.setAttribute("editedDepName", name);
+            try {
+                depService.add(name);
+            } catch (SQLException e) {
+                String sqlerror = e.getMessage();
+                errors.put("name", sqlerror);
+                req.setAttribute("errors", errors);
+                req.getRequestDispatcher("/views/departments/error.jsp").forward(req, resp);
+                return;
+            } catch (IllegalArgumentException ex) {
+                errors.put("name", ex.getMessage());
+                req.setAttribute("errors", errors);
+                req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
+                return;
             }
-            req.getRequestDispatcher("/departments/list").forward(req, resp);
+            req.setAttribute("newDepName", name);
+        } else {
+            if (name == null || name == "" || !regex.match(1, name)) {
+                errors.put("name", "Name is empty or doesn't match minimal requirements");
+                req.setAttribute("errors", errors);
+                try {
+                    Department department = depService.findById(Integer.parseInt(idParameter));
+                    req.setAttribute("department", department);
+                } catch (SQLException ex) {
+                    errors.put("name", ex.getMessage());
+                    req.setAttribute("errors", errors);
+                    req.getRequestDispatcher("/views/departments/error.jsp").forward(req, resp);
+                    return;
+                }
+                req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
+                return;
+            }
+            try {
+                int id = Integer.parseInt(idParameter);
+                depService.edit(id, name);
+            } catch (SQLException e) {
+                String sqlerror = e.getMessage();
+                errors.put("name", sqlerror);
+                req.setAttribute("errors", errors);
+                req.getRequestDispatcher("/views/departments/error.jsp").forward(req, resp);
+                return;
+            } catch (IllegalArgumentException ex) {
+                errors.put("name", ex.getMessage());
+                req.setAttribute("errors", errors);
+                try {
+                    Department department = depService.findById(Integer.parseInt(idParameter));
+                    req.setAttribute("department", department);
+                } catch (SQLException e) {
+                    String sqlerror = e.getMessage();
+                    errors.put("name", sqlerror);
+                    req.setAttribute("errors", errors);
+                    req.getRequestDispatcher("/views/departments/error.jsp").forward(req, resp);
+                    return;
+                }
+                req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
+                return;
+            }
+            req.setAttribute("editedDepName", name);
+        }
+        req.getRequestDispatcher("/departments/list").forward(req, resp);
     }
 }

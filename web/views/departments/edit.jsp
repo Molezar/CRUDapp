@@ -1,5 +1,3 @@
-<%@ page import="java.util.List" %>
-<%@ page import="app.entities.Department" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -21,9 +19,8 @@
         <input type="text" value="${department.depName}" name="name"/>
         </p>
 
-<%--        <c:set var="newDepName" value="${requestScope.newDepName}"/>--%>
         <c:if test="${errors != null}">
-        <span class="error">
+        <span class="error" style="color:#ff0000">>
           &nbsp Issue occured:  ${errors.name} <br><br>
         </span>
         </c:if>

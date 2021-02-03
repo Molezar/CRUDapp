@@ -2,7 +2,6 @@ package app.entities;
 
 import java.util.Objects;
 import java.util.Date;
-//import java.sql.Date;
 
 public class
 Employee {
