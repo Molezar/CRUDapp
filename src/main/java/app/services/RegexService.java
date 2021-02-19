@@ -14,31 +14,31 @@ public class RegexService {
     public boolean match (int regexType ,String inputString) {
         switch (regexType) {
             case 1:
-                return matchname(inputString);
+                return matchName(inputString);
             case 2:
-                return matchemail(inputString);
+                return matchEmail(inputString);
             case 3:
-                return matchdate(inputString);
+                return matchDate(inputString);
             case 4:
-                return matchzp(inputString);
+                return matchZp(inputString);
             default:
             throw new IllegalArgumentException(regexType + " is not supported here");
         }
     }
 
-    public boolean matchname(String inputString) {
+    public boolean matchName(String inputString) {
         return Pattern.matches(nameRegex, inputString);
     }
 
-    public boolean matchemail(String inputString) {
+    public boolean matchEmail(String inputString) {
         return Pattern.matches(emailRegex, inputString);
     }
 
-    public boolean matchdate(String inputString) {
+    public boolean matchDate(String inputString) {
         return Pattern.matches(dateRegex, inputString);
     }
 
-    public boolean matchzp(String inputString) {
+    public boolean matchZp(String inputString) {
         return Pattern.matches(zpRegex, inputString);
     }
 }

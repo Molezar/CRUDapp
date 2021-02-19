@@ -2,11 +2,12 @@ package app.dao;
 
 import app.entities.Employee;
 
-import java.sql.*;
-
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 
 public class EmployeeDao extends AbstractDao {
 
@@ -24,9 +25,9 @@ public class EmployeeDao extends AbstractDao {
 
     }
 
-    public Employee findById(int id) throws SQLException {
-
-            preparedStatement = getConnection().prepareStatement(GETBYID);
+    public Employee findById(int id) {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(GETBYID);
             preparedStatement.setInt(1, id);
             ResultSet res = preparedStatement.executeQuery();
             res.next();
@@ -38,6 +39,9 @@ public class EmployeeDao extends AbstractDao {
             int zp = res.getInt("zp");
             int depId = res.getInt("depid");
             return new Employee(eid, name, familyName, email, date, zp, depId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void empchecker(Employee emp) throws SQLException {
@@ -90,18 +94,21 @@ public class EmployeeDao extends AbstractDao {
     }
 
 
-    public boolean add(Employee emp) throws SQLException {
-        empchecker(emp);
-        preparedStatement = getConnection().prepareStatement(INSERT_NEW);
-        preparedStatement.setString(1, emp.getName());
-        preparedStatement.setString(2, emp.getFamilyName());
-        preparedStatement.setString(3, emp.getEmail());
-        java.sql.Date sqlDate = new java.sql.Date(emp.getDate().getTime());
-        preparedStatement.setDate(4, sqlDate);
-        preparedStatement.setInt(5, emp.getZP());
-        preparedStatement.setInt(6, emp.getDepID());
-        preparedStatement.execute();
-        return true;
+    public void add(Employee emp) {
+        try {
+            empchecker(emp);
+            PreparedStatement preparedStatement = getConnection().prepareStatement(INSERT_NEW);
+            preparedStatement.setString(1, emp.getName());
+            preparedStatement.setString(2, emp.getFamilyName());
+            preparedStatement.setString(3, emp.getEmail());
+            java.sql.Date sqlDate = new java.sql.Date(emp.getDate().getTime());
+            preparedStatement.setDate(4, sqlDate);
+            preparedStatement.setInt(5, emp.getZP());
+            preparedStatement.setInt(6, emp.getDepID());
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void remove(int id) throws SQLException {
@@ -110,17 +117,20 @@ public class EmployeeDao extends AbstractDao {
         preparedStatement.execute();
     }
 
-    public boolean edit(int id, Employee emp) throws SQLException {
-        preparedStatement = getConnection().prepareStatement(UPDATE);
-        preparedStatement.setString(1, emp.getName());
-        preparedStatement.setString(2, emp.getFamilyName());
-        preparedStatement.setString(3, emp.getEmail());
-        java.sql.Date sqlDate = new java.sql.Date(emp.getDate().getTime());
-        preparedStatement.setDate(4, sqlDate);
-        preparedStatement.setInt(5, emp.getZP());
-        preparedStatement.setInt(6, emp.getDepID());
-        preparedStatement.setInt(7, id);
-        preparedStatement.executeUpdate();
-        return true;
+    public void edit(int id, Employee emp) {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(UPDATE);
+            preparedStatement.setString(1, emp.getName());
+            preparedStatement.setString(2, emp.getFamilyName());
+            preparedStatement.setString(3, emp.getEmail());
+            java.sql.Date sqlDate = new java.sql.Date(emp.getDate().getTime());
+            preparedStatement.setDate(4, sqlDate);
+            preparedStatement.setInt(5, emp.getZP());
+            preparedStatement.setInt(6, emp.getDepID());
+            preparedStatement.setInt(7, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

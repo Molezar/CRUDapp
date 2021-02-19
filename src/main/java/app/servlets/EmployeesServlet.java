@@ -1,11 +1,13 @@
 package app.servlets;
 
+import app.dto.EmployeeDto;
+import app.dto.ValidationReport;
 import app.entities.Department;
 import app.entities.Employee;
 import app.services.DepService;
 import app.services.EmpService;
 import app.services.RegexService;
-
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,15 +16,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.text.SimpleDateFormat;
 import java.util.Map;
 
 public class EmployeesServlet extends HttpServlet {
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
-    private RegexService regex = new RegexService();
+    private RegexService regexService = new RegexService();
     private EmpService empService = new EmpService();
     private DepService depService = new DepService();
 
@@ -86,26 +89,36 @@ public class EmployeesServlet extends HttpServlet {
     }
 
     private void renderEmployee(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Map<String, String> errors = new HashMap<>();
         String idParameter = req.getParameter("id");
         String depid = req.getParameter("depid");
 
-        if (idParameter != null && !"".equals(idParameter)) {
-            int id = Integer.parseInt(idParameter);
-            try {
-                empService.list(Integer.parseInt(depid));
+        EmployeeDto employeeDto = new EmployeeDto();
+
+        ValidationReport report = (ValidationReport) req.getSession().getAttribute("emp" + idParameter);
+        if (report != null) {
+            employeeDto.setEmpID(StringUtils.isBlank(idParameter) ? null : Integer.parseInt(idParameter));
+            employeeDto.setEmail(report.getValue("email"));
+            employeeDto.setName(report.getValue("name"));
+            employeeDto.setFamilyName(report.getValue("familyname"));
+            employeeDto.setDate(report.getValue("date"));
+            employeeDto.setZP(report.getValue("zp"));
+            employeeDto.setDepID(depid);
+            req.setAttribute("validationReport", report);
+        } else {
+            if (StringUtils.isNotBlank(idParameter)) {
+                int id = Integer.parseInt(idParameter);
                 Employee employee = empService.findById(id);
-                req.setAttribute("employee", employee);
-            } catch (SQLException e) {
-                String sqlerror = e.getMessage();
-                errors.put("name", sqlerror);
-                req.setAttribute("errors", errors);
-                req.getRequestDispatcher("/views/employees/error.jsp").forward(req, resp);
-                return;
+                employeeDto.setEmpID(employee.getEmpID());
+                employeeDto.setEmail(employee.getEmail());
+                employeeDto.setName(employee.getName());
+                employeeDto.setFamilyName(employee.getFamilyName());
+                employeeDto.setDate(employee.getDate() != null ? SIMPLE_DATE_FORMAT.format(employee.getDate()) : null);
+                employeeDto.setZP(String.valueOf(employee.getZP()));
+                employeeDto.setDepID(String.valueOf(employee.getDepID()));
+            } else {
+                employeeDto.setDepID(depid);
             }
         }
-        req.setAttribute("depid", depid);
-        req.setAttribute("id", idParameter);
 
         req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
     }
@@ -131,208 +144,63 @@ public class EmployeesServlet extends HttpServlet {
         req.getRequestDispatcher("/employees/list").forward(req, resp);
     }
 
-    private void createOrUpdateEmployee(HttpServletRequest req, HttpServletResponse resp) throws IOException, ParseException, ServletException {
-        Map<String, String> errors = new HashMap<>();
-        String idParameter = req.getParameter("id");
+    private void createOrUpdateEmployee(HttpServletRequest req, HttpServletResponse resp) throws IOException, ParseException {
+        String id = req.getParameter("id");
         String name = req.getParameter("name");
         String familyname = req.getParameter("familyname");
         String email = req.getParameter("email");
-        String date = req.getParameter("date");
-        String zp = req.getParameter("zp");
-        String depid = req.getParameter("depid");
+        String dateParam = req.getParameter("date");
+        String zpParam = req.getParameter("zp");
+        String depidParam = req.getParameter("depid");
 
 
-        if (idParameter == null || "".equals(idParameter)) {
-            if (name == null || name == "" || !regex.match(1, name)) {
-                errors.put("name", "Name is empty or doesn't match minimal requirements");
-                req.setAttribute("errors", errors);
-                req.setAttribute("depid", depid);
-                req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                return;
-            }
-            if (familyname == null || familyname == "" || !regex.match(1, familyname)) {
-                errors.put("familyname", "Familyname is empty or doesn't match minimal requirements");
-                req.setAttribute("errors", errors);
-                req.setAttribute("depid", depid);
-                req.setAttribute("name", name);
-                req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                return;
-            }
-            if (email == null || email == "" || !regex.match(2, email)) {
-                errors.put("email", "email is empty or doesn't match minimal requirements");
-                req.setAttribute("errors", errors);
-                req.setAttribute("depid", depid);
-                req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                return;
-            }
-            if (date == null || date == "" || !regex.match(3, date)) {
-                errors.put("date", "date is empty or doesn't match minimal requirements");
-                req.setAttribute("errors", errors);
-                req.setAttribute("depid", depid);
-                req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                return;
-            }
-            Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(date);
-            if (zp == null || zp == "" || !regex.match(4, zp)) {
-                errors.put("zp", "zp is empty or doesn't match minimal requirements");
-                req.setAttribute("errors", errors);
-                req.setAttribute("depid", depid);
-                req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                return;
-            }
-            try {
-                empService.add(name, familyname, email, date1, Integer.parseInt(zp), Integer.parseInt(depid));
-            } catch (SQLException e) {
-                String sqlerror = e.getMessage();
-                errors.put("name", sqlerror);
-                req.setAttribute("errors", errors);
-                req.getRequestDispatcher("/views/employees/error.jsp").forward(req, resp);
-                return;
-            } catch (IllegalArgumentException ex) {
-                if (ex.getMessage().equals("email")) {
-                    errors.put("email", "employee with this email already exists");
-                    req.setAttribute("errors", errors);
-                    req.setAttribute("depid", depid);
-                    req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                    return;
-                }
-                errors.put("name", ex.getMessage());
-                req.setAttribute("errors", errors);
-                req.setAttribute("depid", depid);
-                req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                return;
-            }
-            req.setAttribute("depid", depid);
-            req.setAttribute("newEmpName", name);
-        } else {
-            if (name == null || name == "" || !regex.match(1, name)) {
-                errors.put("name", "Name is empty or doesn't match minimal requirements");
-                req.setAttribute("errors", errors);
-                req.setAttribute("depid", depid);
-                req.setAttribute("id", idParameter);
-                try {
-                    int id = Integer.parseInt(idParameter);
-                    Employee employee = empService.findById(id);
-                    req.setAttribute("employee", employee);
-                } catch (SQLException e) {
-                    String sqlerror = e.getMessage();
-                    errors.put("name", sqlerror);
-                    req.setAttribute("errors", errors);
-                    req.getRequestDispatcher("/views/employees/error.jsp").forward(req, resp);
-                    return;
-                }
-                req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                return;
-            }
-            if (familyname == null || familyname == "" || !regex.match(1, familyname)) {
-                errors.put("familyname", "Familyname is empty or doesn't match minimal requirements");
-                req.setAttribute("errors", errors);
-                req.setAttribute("depid", depid);
-                req.setAttribute("id", idParameter);
-                try {
-                    int id = Integer.parseInt(idParameter);
-                    Employee employee = empService.findById(id);
-                    req.setAttribute("employee", employee);
-                } catch (SQLException e) {
-                    String sqlerror = e.getMessage();
-                    errors.put("name", sqlerror);
-                    req.setAttribute("errors", errors);
-                    req.getRequestDispatcher("/views/employees/error.jsp").forward(req, resp);
-                    return;
-                }
-                req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                return;
-            }
-            if (email == null || email == "" || !regex.match(2, email)) {
-                errors.put("email", "email is empty or doesn't match minimal requirements");
-                req.setAttribute("errors", errors);
-                req.setAttribute("depid", depid);
-                req.setAttribute("id", idParameter);
-                try {
-                    int id = Integer.parseInt(idParameter);
-                    Employee employee = empService.findById(id);
-                    req.setAttribute("employee", employee);
-                } catch (SQLException e) {
-                    String sqlerror = e.getMessage();
-                    errors.put("name", sqlerror);
-                    req.setAttribute("errors", errors);
-                    req.getRequestDispatcher("/views/employees/error.jsp").forward(req, resp);
-                    return;
-                }
-                req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                return;
-            }
-            if (date == null || date == "" || !regex.match(3, date)) {
-                errors.put("date", "date is empty or doesn't match minimal requirements");
-                req.setAttribute("errors", errors);
-                req.setAttribute("depid", depid);
-                req.setAttribute("id", idParameter);
-                try {
-                    int id = Integer.parseInt(idParameter);
-                    Employee employee = empService.findById(id);
-                    req.setAttribute("employee", employee);
-                } catch (SQLException e) {
-                    String sqlerror = e.getMessage();
-                    errors.put("name", sqlerror);
-                    req.setAttribute("errors", errors);
-                    req.getRequestDispatcher("/views/employees/error.jsp").forward(req, resp);
-                    return;
-                }
-                req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                return;
-            }
-            Date date1 = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+        ValidationReport report = new ValidationReport();
 
-            if (zp == null || zp == "" || !regex.match(4, zp)) {
-                errors.put("zp", "zp is empty or doesn't match minimal requirements");
-                req.setAttribute("errors", errors);
-                req.setAttribute("depid", depid);
-                req.setAttribute("id", idParameter);
-                try {
-                    int id = Integer.parseInt(idParameter);
-                    Employee employee = empService.findById(id);
-                    req.setAttribute("employee", employee);
-                } catch (SQLException e) {
-                    String sqlerror = e.getMessage();
-                    errors.put("name", sqlerror);
-                    req.setAttribute("errors", errors);
-                    req.getRequestDispatcher("/views/employees/error.jsp").forward(req, resp);
-                    return;
-                }
-
-                req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                return;
-            }
-            try {
-                empService.edit(Integer.parseInt(idParameter), name, familyname, email, date1, Integer.parseInt(zp), Integer.parseInt(depid));
-            } catch (SQLException e) {
-                String sqlerror = e.getMessage();
-                errors.put("name", sqlerror);
-                req.setAttribute("errors", errors);
-                req.getRequestDispatcher("/views/employees/error.jsp").forward(req, resp);
-                return;
-            } catch (IllegalArgumentException ex) {
-                errors.put("name", ex.getMessage());
-                req.setAttribute("errors", errors);
-                req.setAttribute("depid", depid);
-                req.setAttribute("id", idParameter);
-                try {
-                    int id = Integer.parseInt(idParameter);
-                    Employee employee = empService.findById(id);
-                    req.setAttribute("employee", employee);
-                } catch (SQLException e) {
-                    String sqlerror = e.getMessage();
-                    errors.put("name", sqlerror);
-                    req.setAttribute("errors", errors);
-                    req.getRequestDispatcher("/views/employees/error.jsp").forward(req, resp);
-                    return;
-                }
-                req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
-                return;
-            }
-            req.setAttribute("depid", depid);
-            req.setAttribute("editedEmpName", name);
+        if (StringUtils.isBlank(name)) {
+            report.addError("name", name, "Name is empty");
+        } else if (!regexService.matchName(name)) {
+            report.addError("name", name, "Name doesn't match minimal requirements");
         }
-        req.getRequestDispatcher("/employees/list").forward(req, resp);
+
+        if (StringUtils.isBlank(familyname)) {
+            report.addError("familyname", name, "Familyname is empty");
+        } else if (!regexService.matchName(name)) {
+            report.addError("familyname", name, "Familyname doesn't match minimal requirements");
+        }
+
+        if (StringUtils.isBlank(email)) {
+            report.addError("email", email, "Email is empty");
+        } else if (!regexService.matchEmail(name)) {
+            report.addError("email", email, "Email has incorrect format");
+        }
+
+        if (StringUtils.isBlank(dateParam)) {
+            report.addError("date", dateParam, "Date is empty");
+        } else if (!regexService.matchDate(dateParam)) {
+            report.addError("date", dateParam, "Date has incorrect format");
+        }
+
+        if (StringUtils.isBlank(zpParam)) {
+            report.addError("zp", zpParam, "Zp is empty");
+        } else if (!regexService.matchZp(dateParam)) {
+            report.addError("zp", zpParam, "Zp has incorrect format");
+        }
+
+
+        if (report.isValid()) {
+            req.getSession().setAttribute("emp" + id, report);
+            resp.sendRedirect("/employees/employee");
+        } else {
+            Date date = SIMPLE_DATE_FORMAT.parse(dateParam);
+            int zp = Integer.parseInt(zpParam);
+            int depid = Integer.parseInt(depidParam);
+            if (StringUtils.isBlank(id)) {
+                empService.add(name, familyname, email, date, zp, depid);
+            } else {
+                empService.edit(Integer.parseInt(id), name, familyname, email, date, zp, depid);
+            }
+            req.getSession().removeAttribute("emp" + id);
+            resp.sendRedirect("/employees/list");
+        }
     }
 }
