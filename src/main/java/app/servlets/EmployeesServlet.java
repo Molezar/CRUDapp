@@ -119,7 +119,7 @@ public class EmployeesServlet extends HttpServlet {
                 employeeDto.setDepID(depid);
             }
         }
-
+        req.setAttribute("employee", employeeDto);
         req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
     }
 
@@ -187,9 +187,9 @@ public class EmployeesServlet extends HttpServlet {
         }
 
 
-        if (report.isValid()) {
+        if (!report.isValid()) {
             req.getSession().setAttribute("emp" + id, report);
-            resp.sendRedirect("/employees/employee");
+            resp.sendRedirect("/employees/employee?id=" + id + "&depid=" + depidParam);
         } else {
             Date date = SIMPLE_DATE_FORMAT.parse(dateParam);
             int zp = Integer.parseInt(zpParam);
