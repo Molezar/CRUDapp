@@ -93,32 +93,40 @@ public class EmployeesServlet extends HttpServlet {
         String depid = req.getParameter("depid");
 
         EmployeeDto employeeDto = new EmployeeDto();
+        employeeDto.setDepID(depid);
+
+        if (StringUtils.isNotBlank(idParameter)) {
+            int id = Integer.parseInt(idParameter);
+            Employee employee = empService.findById(id);
+            employeeDto.setEmpID(employee.getEmpID());
+            employeeDto.setEmail(employee.getEmail());
+            employeeDto.setName(employee.getName());
+            employeeDto.setFamilyName(employee.getFamilyName());
+            employeeDto.setDate(employee.getDate() != null ? SIMPLE_DATE_FORMAT.format(employee.getDate()) : null);
+            employeeDto.setZP(String.valueOf(employee.getZP()));
+            employeeDto.setDepID(String.valueOf(employee.getDepID()));
+        }
 
         ValidationReport report = (ValidationReport) req.getSession().getAttribute("emp" + idParameter);
         if (report != null) {
-            employeeDto.setEmpID(StringUtils.isBlank(idParameter) ? null : Integer.parseInt(idParameter));
-            employeeDto.setEmail(report.getValue("email"));
-            employeeDto.setName(report.getValue("name"));
-            employeeDto.setFamilyName(report.getValue("familyname"));
-            employeeDto.setDate(report.getValue("date"));
-            employeeDto.setZP(report.getValue("zp"));
-            employeeDto.setDepID(depid);
-            req.setAttribute("validationReport", report);
-        } else {
-            if (StringUtils.isNotBlank(idParameter)) {
-                int id = Integer.parseInt(idParameter);
-                Employee employee = empService.findById(id);
-                employeeDto.setEmpID(employee.getEmpID());
-                employeeDto.setEmail(employee.getEmail());
-                employeeDto.setName(employee.getName());
-                employeeDto.setFamilyName(employee.getFamilyName());
-                employeeDto.setDate(employee.getDate() != null ? SIMPLE_DATE_FORMAT.format(employee.getDate()) : null);
-                employeeDto.setZP(String.valueOf(employee.getZP()));
-                employeeDto.setDepID(String.valueOf(employee.getDepID()));
-            } else {
-                employeeDto.setDepID(depid);
+            if (report.hasError("email")) {
+                employeeDto.setEmail(report.getValue("email"));
             }
+            if (report.hasError("name")) {
+                employeeDto.setName(report.getValue("name"));
+            }
+            if (report.hasError("familyname")) {
+                employeeDto.setFamilyName(report.getValue("familyname"));
+            }
+            if (report.hasError("date")) {
+                employeeDto.setDate(report.getValue("date"));
+            }
+            if (report.hasError("zp")) {
+                employeeDto.setZP(report.getValue("zp"));
+            }
+            req.setAttribute("validationReport", report);
         }
+
         req.setAttribute("employee", employeeDto);
         req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
     }

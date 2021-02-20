@@ -12,6 +12,10 @@ public class ValidationReport {
         errors.put(fieldName, new Error(fieldName, fieldValue, error));
     }
 
+    public boolean hasError(String fieldName) {
+        return errors.containsKey(fieldName);
+    }
+
     public String getValue(String fieldName) {
         Error error = errors.get(fieldName);
         if (error != null) {
