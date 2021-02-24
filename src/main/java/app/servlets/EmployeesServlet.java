@@ -190,7 +190,7 @@ public class EmployeesServlet extends HttpServlet {
 
         if (StringUtils.isBlank(zpParam)) {
             report.addError("zp", zpParam, "Zp is empty");
-        } else if (!regexService.matchZp(dateParam)) {
+        } else if (!regexService.matchZp(zpParam)) {
             report.addError("zp", zpParam, "Zp has incorrect format");
         }
 

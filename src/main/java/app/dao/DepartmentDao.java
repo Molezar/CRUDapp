@@ -9,8 +9,6 @@ import java.util.List;
 
 public class DepartmentDao extends AbstractDao {
 
-    static PreparedStatement preparedStatement;
-
     private static final String INSERT_NEW = "INSERT INTO departments (name)  VALUES(?)";
     private static final String GETALLDEPS = "SELECT * FROM departments";
     private static final String DELETE = "DELETE FROM departments WHERE id = ?";
@@ -23,7 +21,7 @@ public class DepartmentDao extends AbstractDao {
 
     public Department findById(int id) throws SQLException {
 
-        preparedStatement = getConnection().prepareStatement(GETBYID);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(GETBYID);
         preparedStatement.setInt(1, id);
         ResultSet res = preparedStatement.executeQuery();
         res.next();
@@ -47,7 +45,7 @@ public class DepartmentDao extends AbstractDao {
 
     public List<Department> list() throws SQLException {
         ArrayList<Department> department = new ArrayList<>();
-        preparedStatement = getConnection().prepareStatement(GETALLDEPS);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(GETALLDEPS);
         ResultSet res = preparedStatement.executeQuery();
         while (res.next()) {
             int id = res.getInt("id");
@@ -60,14 +58,14 @@ public class DepartmentDao extends AbstractDao {
 
     public boolean add(Department dep) throws SQLException {
         namechecker(dep);
-        preparedStatement = getConnection().prepareStatement(INSERT_NEW);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(INSERT_NEW);
         preparedStatement.setString(1, dep.getDepName());
         preparedStatement.execute();
         return true;
     }
 
     public void remove(int id) throws SQLException {
-        preparedStatement = getConnection().prepareStatement(DELETE);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(DELETE);
         preparedStatement.setInt(1, id);
         preparedStatement.execute();
     }
@@ -80,7 +78,7 @@ public class DepartmentDao extends AbstractDao {
         }
         namechecker(dep);
 
-        preparedStatement = getConnection().prepareStatement(UPDATE);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(UPDATE);
         preparedStatement.setString(1, dep.getDepName());
         preparedStatement.setInt(2, id);
         preparedStatement.executeUpdate();

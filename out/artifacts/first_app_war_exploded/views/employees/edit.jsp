@@ -16,14 +16,11 @@
 
 
 <div>
-    <c:set var="depid" value="${requestScope.depid}"/>
-    <c:set var="id" value="${requestScope.id}"/>
-
 
     <form method="post" action="${pageContext.request.contextPath}/employees/update">
 
-        <input type="hidden" value="${depid}" name="depid"/>
-        <input type="hidden" value="${id}" name="id"/>
+        <input type="hidden" value="${employee.depID}" name="depid"/>
+        <input type="hidden" value="${employee.empID}" name="id"/>
 
         <p>&nbsp Name
             <input type="text" minlength="2" maxlength="32" pattern="[A-Za-z]{2,32}" value="${employee.name}" required name="name"/>

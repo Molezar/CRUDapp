@@ -11,8 +11,6 @@ import java.util.List;
 
 public class EmployeeDao extends AbstractDao {
 
-    static PreparedStatement preparedStatement;
-
     private static final String INSERT_NEW = "INSERT INTO employees (name, familyname, email, dateofbirth, zp, depid)  VALUES(?, ?, ?, ?, ?, ?)";
     private static final String GETEMPS = "SELECT * FROM employees WHERE depid = ?";
     private static final String GETALLEMPS = "SELECT * FROM employees";
@@ -59,7 +57,7 @@ public class EmployeeDao extends AbstractDao {
 
     public List<Employee> list() throws SQLException {
         ArrayList<Employee> employee = new ArrayList<>();
-        preparedStatement = getConnection().prepareStatement(GETALLEMPS);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(GETALLEMPS);
         ResultSet res = preparedStatement.executeQuery();
         while (res.next()) {
             int id = res.getInt("id");
@@ -77,7 +75,7 @@ public class EmployeeDao extends AbstractDao {
 
     public List<Employee> list(int depid) throws SQLException {
         ArrayList<Employee> employee = new ArrayList<>();
-        preparedStatement = getConnection().prepareStatement(GETEMPS);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(GETEMPS);
         preparedStatement.setInt(1, depid);
         ResultSet res = preparedStatement.executeQuery();
         while (res.next()) {
@@ -112,7 +110,7 @@ public class EmployeeDao extends AbstractDao {
     }
 
     public void remove(int id) throws SQLException {
-        preparedStatement = getConnection().prepareStatement(DELETE);
+        PreparedStatement preparedStatement = getConnection().prepareStatement(DELETE);
         preparedStatement.setInt(1, id);
         preparedStatement.execute();
     }
