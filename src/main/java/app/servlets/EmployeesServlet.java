@@ -14,13 +14,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class EmployeesServlet extends HttpServlet {
     private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
@@ -52,9 +49,6 @@ public class EmployeesServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String uri = req.getRequestURI();
         switch (uri) {
-            case "/employees/list":
-                renderEmployeesList(req, resp);
-                break;
             case "/employees/update":
                 try {
                     createOrUpdateEmployee(req, resp);
@@ -68,23 +62,21 @@ public class EmployeesServlet extends HttpServlet {
     }
 
     private void renderEmployeesList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Map<String, String> errors = new HashMap<>();
         String depid = req.getParameter("depid");
 
-        int id = Integer.parseInt(depid);
-        try {
-            Department dep = depService.findById(id);
-            req.setAttribute("dep", dep);
-            List<Employee> emps = empService.list(id);
-            req.setAttribute("emps", emps);
-        } catch (SQLException e) {
-            String sqlerror = e.getMessage();
-            errors.put("name", sqlerror);
-            req.setAttribute("errors", errors);
-            req.getRequestDispatcher("/views/employees/error.jsp").forward(req, resp);
-            return;
-        }
+        String editedEmpName = req.getParameter("editedEmpName");
+        req.setAttribute("editedEmpName", editedEmpName);
+        String newEmpName = req.getParameter("newEmpName");
+        req.setAttribute("newEmpName", newEmpName);
+        String deletedEmpName = req.getParameter("deletedEmpName");
+        req.setAttribute("deletedEmpName", deletedEmpName);
 
+        int id = Integer.parseInt(depid);
+        Department dep = depService.findById(id);
+        req.setAttribute("dep", dep);
+
+        List<Employee> emps = empService.list(id);
+        req.setAttribute("emps", emps);
         req.getRequestDispatcher("/views/employees/list.jsp").forward(req, resp);
     }
 
@@ -131,25 +123,16 @@ public class EmployeesServlet extends HttpServlet {
         req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
     }
 
-    private void deleteEmployee(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Map<String, String> errors = new HashMap<>();
+    private void deleteEmployee(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String idParameter = req.getParameter("id");
         String depid = req.getParameter("depid");
 
         int id = Integer.parseInt(idParameter);
-        try {
-            Employee employee = empService.findById(id);
-            req.setAttribute("employee", employee);
-            req.setAttribute("depid", depid);
-            empService.remove(id);
-        } catch (SQLException e) {
-            String sqlerror = e.getMessage();
-            errors.put("name", sqlerror);
-            req.setAttribute("errors", errors);
-            req.getRequestDispatcher("/views/employees/error.jsp").forward(req, resp);
-            return;
-        }
-        req.getRequestDispatcher("/employees/list").forward(req, resp);
+
+        Employee employee = empService.findById(id);
+        String deletedEmpName = employee.getName();
+        empService.remove(id);
+        resp.sendRedirect("/employees/list?depid=" + depid + "&deletedEmpName=" + deletedEmpName);
     }
 
     private void createOrUpdateEmployee(HttpServletRequest req, HttpServletResponse resp) throws IOException, ParseException {
@@ -171,14 +154,14 @@ public class EmployeesServlet extends HttpServlet {
         }
 
         if (StringUtils.isBlank(familyname)) {
-            report.addError("familyname", name, "Familyname is empty");
+            report.addError("familyname", familyname, "Familyname is empty");
         } else if (!regexService.matchName(name)) {
-            report.addError("familyname", name, "Familyname doesn't match minimal requirements");
+            report.addError("familyname", familyname, "Familyname doesn't match minimal requirements");
         }
 
         if (StringUtils.isBlank(email)) {
             report.addError("email", email, "Email is empty");
-        } else if (!regexService.matchEmail(name)) {
+        } else if (!regexService.matchEmail(email)) {
             report.addError("email", email, "Email has incorrect format");
         }
 
@@ -204,11 +187,16 @@ public class EmployeesServlet extends HttpServlet {
             int depid = Integer.parseInt(depidParam);
             if (StringUtils.isBlank(id)) {
                 empService.add(name, familyname, email, date, zp, depid);
+                String newEmpName = name;
+                req.getSession().removeAttribute("emp" + id);
+                resp.sendRedirect("/employees/list?depid=" + depidParam + "&newEmpName=" + newEmpName);
+
             } else {
                 empService.edit(Integer.parseInt(id), name, familyname, email, date, zp, depid);
+                String editedEmpName = name;
+                req.getSession().removeAttribute("emp" + id);
+                resp.sendRedirect("/employees/list?depid=" + depidParam + "&editedEmpName=" + editedEmpName);
             }
-            req.getSession().removeAttribute("emp" + id);
-            resp.sendRedirect("/employees/list");
         }
     }
 }

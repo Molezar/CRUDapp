@@ -3,13 +3,12 @@ package app.services;
 import app.dao.EmployeeDao;
 import app.entities.Employee;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 public class EmpService {
 
-    public List<Employee> list(int depid) throws SQLException {
+    public List<Employee> list(int depid) {
         EmployeeDao employeeDao = new EmployeeDao();
         return employeeDao.list(depid);
     }
@@ -20,7 +19,7 @@ public class EmpService {
         employeeDao.add(emp);
     }
 
-    public void remove(int id) throws SQLException {
+    public void remove(int id)  {
         EmployeeDao employeeDao = new EmployeeDao();
         employeeDao.remove(id);
     }

@@ -8,10 +8,10 @@ public class RegexService {
     private static final String dateRegex = "(19|20)\\d\\d-((0[1-9]|1[012])-(0[1-9]|[12]\\d)|(0[13-9]|1[012])-30|(0[13578]|1[02])-31)";
     private static final String zpRegex = "^[1-9][0-9]{4,6}";
 
-    public RegexService () {
+    public RegexService() {
     }
 
-    public boolean match (int regexType ,String inputString) {
+    public boolean match(int regexType, String inputString) {
         switch (regexType) {
             case 1:
                 return matchName(inputString);
@@ -22,7 +22,7 @@ public class RegexService {
             case 4:
                 return matchZp(inputString);
             default:
-            throw new IllegalArgumentException(regexType + " is not supported here");
+                throw new IllegalArgumentException(regexType + " is not supported here");
         }
     }
 

@@ -19,9 +19,7 @@ public class EmployeeDao extends AbstractDao {
     private static final String GETBYID = "SELECT * FROM employees WHERE id = ?";
 
 
-    public EmployeeDao() {
-
-    }
+    public EmployeeDao() {}
 
     public Employee findById(int id) {
         try {
@@ -42,7 +40,7 @@ public class EmployeeDao extends AbstractDao {
         }
     }
 
-    private void empchecker(Employee emp) throws SQLException {
+    private void empchecker(Employee emp) {
         EmployeeDao employeeDao = new EmployeeDao();
         List<Employee> employee = employeeDao.list();
         int k = 0;
@@ -55,40 +53,48 @@ public class EmployeeDao extends AbstractDao {
         }
     }
 
-    public List<Employee> list() throws SQLException {
-        ArrayList<Employee> employee = new ArrayList<>();
-        PreparedStatement preparedStatement = getConnection().prepareStatement(GETALLEMPS);
-        ResultSet res = preparedStatement.executeQuery();
-        while (res.next()) {
-            int id = res.getInt("id");
-            String name = res.getString("name");
-            String familyName = res.getString("familyname");
-            String email = res.getString("email");
-            Date date = res.getDate("dateofbirth");
-            int zp = res.getInt("zp");
-            int depId = res.getInt("depid");
+    public List<Employee> list() {
+        try {
+            ArrayList<Employee> employee = new ArrayList<>();
+            PreparedStatement preparedStatement = getConnection().prepareStatement(GETALLEMPS);
+            ResultSet res = preparedStatement.executeQuery();
+            while (res.next()) {
+                int id = res.getInt("id");
+                String name = res.getString("name");
+                String familyName = res.getString("familyname");
+                String email = res.getString("email");
+                Date date = res.getDate("dateofbirth");
+                int zp = res.getInt("zp");
+                int depId = res.getInt("depid");
 
-            employee.add(new Employee(id, name, familyName, email, date, zp, depId));
+                employee.add(new Employee(id, name, familyName, email, date, zp, depId));
+            }
+            return employee;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return employee;
     }
 
-    public List<Employee> list(int depid) throws SQLException {
-        ArrayList<Employee> employee = new ArrayList<>();
-        PreparedStatement preparedStatement = getConnection().prepareStatement(GETEMPS);
-        preparedStatement.setInt(1, depid);
-        ResultSet res = preparedStatement.executeQuery();
-        while (res.next()) {
-            int id = res.getInt("id");
-            String name = res.getString("name");
-            String familyName = res.getString("familyname");
-            String email = res.getString("email");
-            Date date = res.getDate("dateofbirth");
-            int zp = res.getInt("zp");
-            int depId = res.getInt("depid");
-            employee.add(new Employee(id, name, familyName, email, date, zp, depId));
+    public List<Employee> list(int depid) {
+        try {
+            ArrayList<Employee> employee = new ArrayList<>();
+            PreparedStatement preparedStatement = getConnection().prepareStatement(GETEMPS);
+            preparedStatement.setInt(1, depid);
+            ResultSet res = preparedStatement.executeQuery();
+            while (res.next()) {
+                int id = res.getInt("id");
+                String name = res.getString("name");
+                String familyName = res.getString("familyname");
+                String email = res.getString("email");
+                Date date = res.getDate("dateofbirth");
+                int zp = res.getInt("zp");
+                int depId = res.getInt("depid");
+                employee.add(new Employee(id, name, familyName, email, date, zp, depId));
+            }
+            return employee;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return employee;
     }
 
 
@@ -109,10 +115,14 @@ public class EmployeeDao extends AbstractDao {
         }
     }
 
-    public void remove(int id) throws SQLException {
-        PreparedStatement preparedStatement = getConnection().prepareStatement(DELETE);
-        preparedStatement.setInt(1, id);
-        preparedStatement.execute();
+    public void remove(int id) {
+        try {
+            PreparedStatement preparedStatement = getConnection().prepareStatement(DELETE);
+            preparedStatement.setInt(1, id);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void edit(int id, Employee emp) {
