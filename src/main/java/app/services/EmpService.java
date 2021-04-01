@@ -13,10 +13,10 @@ public class EmpService {
         return employeeDao.list(depid);
     }
 
-    public void add(String name, String familyname, String email, Date date, int zp, int depid) {
+    public boolean add(String name, String familyname, String email, Date date, int zp, int depid) {
         EmployeeDao employeeDao = new EmployeeDao();
         Employee emp = new Employee(name, familyname, email, date, zp, depid);
-        employeeDao.add(emp);
+        return employeeDao.add(emp);
     }
 
     public void remove(int id)  {
@@ -24,10 +24,10 @@ public class EmpService {
         employeeDao.remove(id);
     }
 
-    public void edit(int id, String name, String familyname, String email, Date date, int zp, int depid) {
+    public boolean edit(int id, String name, String familyname, String email, Date date, int zp, int depid) {
         EmployeeDao employeeDao = new EmployeeDao();
         Employee emp = new Employee(name, familyname, email, date, zp, depid);
-        employeeDao.edit(id, emp);
+        return  employeeDao.edit(id, emp);
     }
 
 

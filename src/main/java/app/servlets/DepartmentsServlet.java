@@ -1,10 +1,9 @@
 package app.servlets;
 
 import app.dto.DepartmentDto;
-import app.dto.EmployeeDto;
+import app.dto.ValidFieldsReport;
 import app.dto.ValidationReport;
 import app.entities.Department;
-import app.entities.Employee;
 import app.services.DepService;
 import app.services.RegexService;
 import org.apache.commons.lang3.StringUtils;
@@ -71,6 +70,7 @@ public class DepartmentsServlet extends HttpServlet {
 
     private void renderDepartment(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String idParameter = req.getParameter("id");
+        String samename = req.getParameter("samename");
 
         DepartmentDto departmentDto = new DepartmentDto();
 
@@ -82,19 +82,24 @@ public class DepartmentsServlet extends HttpServlet {
         }
 
         ValidationReport report = (ValidationReport) req.getSession().getAttribute("dep" + idParameter);
-
         if (report != null) {
             if (report.hasError("name")) {
                 departmentDto.setDepName(report.getValue("name"));
             }
             req.setAttribute("validationReport", report);
         }
-
+        ValidFieldsReport vReport = (ValidFieldsReport) req.getSession().getAttribute("valid");
+        if (vReport != null) {
+            if (vReport.hasValids("name")) {
+                departmentDto.setDepName(vReport.getValue("name"));
+            }
+        }
+        req.setAttribute("samename", samename);
         req.setAttribute("department", departmentDto);
         req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
     }
 
-    private void deleteDepartment(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void deleteDepartment(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String idParameter = req.getParameter("id");
 
         int id = Integer.parseInt(idParameter);
@@ -104,102 +109,48 @@ public class DepartmentsServlet extends HttpServlet {
         resp.sendRedirect("/departments/list?depid=" + idParameter + "&deletedDepName=" + deletedDepName);
     }
 
-    private void createOrUpdateDepartment(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    private void createOrUpdateDepartment(HttpServletRequest req, HttpServletResponse resp) throws
+            IOException, ServletException {
         String idParameter = req.getParameter("id");
         String name = req.getParameter("name");
 
         ValidationReport report = new ValidationReport();
+        ValidFieldsReport vReport = new ValidFieldsReport();
 
         if (StringUtils.isBlank(name)) {
             report.addError("name", name, "Name is empty");
         } else if (!regexService.matchName(name)) {
             report.addError("name", name, "Name doesn't match minimal requirements");
         }
+        vReport.addValids("name", name);
 
         if (!report.isValid()) {
             req.getSession().setAttribute("dep" + idParameter, report);
             resp.sendRedirect("/departments/department?id=" + idParameter);
         } else {
             if (StringUtils.isBlank(idParameter)) {
-                depService.add(name);
-                String newDepName = name;
-                req.getSession().removeAttribute("dep" + idParameter);
-                resp.sendRedirect("/departments/list?depid=" + idParameter + "&newDepName=" + newDepName);
-
+                if (!depService.add(name)) {
+                    String samename = "this name already exists";
+                    req.getSession().setAttribute("valid", vReport);
+                    resp.sendRedirect("/departments/department?samename=" + samename);
+                } else {
+                    String newDepName = name;
+                    req.getSession().removeAttribute("dep" + idParameter);
+                    req.getSession().removeAttribute("valid");
+                    resp.sendRedirect("/departments/list?depid=" + idParameter + "&newDepName=" + newDepName);
+                }
             } else {
-                depService.edit(Integer.parseInt(idParameter), name);
-                String editedDepName = name;
-                req.getSession().removeAttribute("dep" + idParameter);
-                resp.sendRedirect("/departments/list?depid=" + idParameter + "&editedDepName=" + editedDepName);
+                if (!depService.edit(Integer.parseInt(idParameter), name)) {
+                    String samename = "this name already exists";
+                    req.getSession().setAttribute("valid", vReport);
+                    resp.sendRedirect("/departments/department?id=" + idParameter + "&samename=" + samename);
+                } else {
+                    String editedDepName = name;
+                    req.getSession().removeAttribute("dep" + idParameter);
+                    req.getSession().removeAttribute("valid");
+                    resp.sendRedirect("/departments/list?depid=" + idParameter + "&editedDepName=" + editedDepName);
+                }
             }
         }
-
-
-//        if (idParameter == null || "".equals(idParameter)) {
-//            if (name == null || name == "" || !regex.match(1, name)) {
-//                errors.put("name", "Name is empty or doesn't match minimal requirements");
-//                req.setAttribute("errors", errors);
-//                req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
-//                return;
-//            }
-//            try {
-//                depService.add(name);
-//            } catch (SQLException e) {
-//                String sqlerror = e.getMessage();
-//                errors.put("name", sqlerror);
-//                req.setAttribute("errors", errors);
-//                req.getRequestDispatcher("/views/departments/error.jsp").forward(req, resp);
-//                return;
-//            } catch (IllegalArgumentException ex) {
-//                errors.put("name", ex.getMessage());
-//                req.setAttribute("errors", errors);
-//                req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
-//                return;
-//            }
-//            req.setAttribute("newDepName", name);
-//        } else {
-//            if (name == null || name == "" || !regex.match(1, name)) {
-//                errors.put("name", "Name is empty or doesn't match minimal requirements");
-//                req.setAttribute("errors", errors);
-//                try {
-//                    Department department = depService.findById(Integer.parseInt(idParameter));
-//                    req.setAttribute("department", department);
-//                } catch (SQLException ex) {
-//                    errors.put("name", ex.getMessage());
-//                    req.setAttribute("errors", errors);
-//                    req.getRequestDispatcher("/views/departments/error.jsp").forward(req, resp);
-//                    return;
-//                }
-//                req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
-//                return;
-//            }
-//            try {
-//                int id = Integer.parseInt(idParameter);
-//                depService.edit(id, name);
-//            } catch (SQLException e) {
-//                String sqlerror = e.getMessage();
-//                errors.put("name", sqlerror);
-//                req.setAttribute("errors", errors);
-//                req.getRequestDispatcher("/views/departments/error.jsp").forward(req, resp);
-//                return;
-//            } catch (IllegalArgumentException ex) {
-//                errors.put("name", ex.getMessage());
-//                req.setAttribute("errors", errors);
-//                try {
-//                    Department department = depService.findById(Integer.parseInt(idParameter));
-//                    req.setAttribute("department", department);
-//                } catch (SQLException e) {
-//                    String sqlerror = e.getMessage();
-//                    errors.put("name", sqlerror);
-//                    req.setAttribute("errors", errors);
-//                    req.getRequestDispatcher("/views/departments/error.jsp").forward(req, resp);
-//                    return;
-//                }
-//                req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
-//                return;
-//            }
-//            req.setAttribute("editedDepName", name);
-//        }
-//        req.getRequestDispatcher("/departments/list").forward(req, resp);
     }
 }

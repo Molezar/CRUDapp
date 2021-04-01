@@ -13,6 +13,7 @@ class PooledConnectionDataSource extends AbstractConnectionDataSource{
     private PooledConnectionDataSource() {
         try {
             ds = new BasicDataSource();
+            ds.setDriverClassName(DRIVER_CLASS_NAME);
             ds.setUrl(URL);
             ds.setUsername(USERNAME);
             ds.setPassword(PASSWORD);

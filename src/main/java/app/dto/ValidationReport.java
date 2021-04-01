@@ -3,18 +3,14 @@ package app.dto;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-
 public class ValidationReport {
     private final Map<String, Error> errors = new LinkedHashMap<>();
-
 
     public void addError(String fieldName, String fieldValue, String error) {
         errors.put(fieldName, new Error(fieldName, fieldValue, error));
     }
 
-    public boolean hasError(String fieldName) {
-        return errors.containsKey(fieldName);
-    }
+    public boolean hasError(String fieldName) {return errors.containsKey(fieldName);}
 
     public String getValue(String fieldName) {
         Error error = errors.get(fieldName);
@@ -24,7 +20,6 @@ public class ValidationReport {
             return null;
         }
     }
-
 
     public Map<String, Error> getErrors() {
         return errors;
@@ -57,6 +52,4 @@ public class ValidationReport {
             return error;
         }
     }
-
-
 }

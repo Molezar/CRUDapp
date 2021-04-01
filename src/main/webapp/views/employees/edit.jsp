@@ -53,6 +53,10 @@
         <c:if test="${validationReport.errors['email'] != null}">
             <div class="error" style="color:#ff0000">${validationReport.errors['email'].error}</div>
         </c:if>
+        <c:if test="${samepers != null}">
+            <div class="error" style="color:#ff0000">${samepers}</div>
+        </c:if>
+
 
         <p id="label">
             <label>Date</label>

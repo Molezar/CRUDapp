@@ -1,6 +1,7 @@
 package app.servlets;
 
 import app.dto.EmployeeDto;
+import app.dto.ValidFieldsReport;
 import app.dto.ValidationReport;
 import app.entities.Department;
 import app.entities.Employee;
@@ -83,6 +84,7 @@ public class EmployeesServlet extends HttpServlet {
     private void renderEmployee(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String idParameter = req.getParameter("id");
         String depid = req.getParameter("depid");
+        String samepers = req.getParameter("samepers");
 
         EmployeeDto employeeDto = new EmployeeDto();
         employeeDto.setDepID(depid);
@@ -97,9 +99,34 @@ public class EmployeesServlet extends HttpServlet {
             employeeDto.setDate(employee.getDate() != null ? SIMPLE_DATE_FORMAT.format(employee.getDate()) : null);
             employeeDto.setZP(String.valueOf(employee.getZP()));
             employeeDto.setDepID(String.valueOf(employee.getDepID()));
+
+            ValidationReport report = (ValidationReport) req.getSession().getAttribute("emp" + idParameter);
+            if (report != null) {
+                if (report.hasError("email")) {
+                    employeeDto.setEmail(report.getValue("email"));
+                }
+                if (report.hasError("name")) {
+                    employeeDto.setName(report.getValue("name"));
+                }
+                if (report.hasError("familyname")) {
+                    employeeDto.setFamilyName(report.getValue("familyname"));
+                }
+                if (report.hasError("date")) {
+                    employeeDto.setDate(report.getValue("date"));
+                }
+                if (report.hasError("zp")) {
+                    employeeDto.setZP(report.getValue("zp"));
+                }
+                req.setAttribute("validationReport", report);
+            }
+
+            req.setAttribute("employee", employeeDto);
+            req.setAttribute("samepers", samepers);
+
+            req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
         }
 
-        ValidationReport report = (ValidationReport) req.getSession().getAttribute("emp" + idParameter);
+        ValidationReport report = (ValidationReport) req.getSession().getAttribute("notvalidsaddemp");
         if (report != null) {
             if (report.hasError("email")) {
                 employeeDto.setEmail(report.getValue("email"));
@@ -119,6 +146,25 @@ public class EmployeesServlet extends HttpServlet {
             req.setAttribute("validationReport", report);
         }
 
+        ValidFieldsReport vReport = (ValidFieldsReport) req.getSession().getAttribute("validsaddemp");
+        if (vReport != null) {
+            if (vReport.hasValids("email")) {
+                employeeDto.setEmail(vReport.getValue("email"));
+            }
+            if (vReport.hasValids("name")) {
+                employeeDto.setName(vReport.getValue("name"));
+            }
+            if (vReport.hasValids("familyname")) {
+                employeeDto.setFamilyName(vReport.getValue("familyname"));
+            }
+            if (vReport.hasValids("date")) {
+                employeeDto.setDate(vReport.getValue("date"));
+            }
+            if (vReport.hasValids("zp")) {
+                employeeDto.setZP(vReport.getValue("zp"));
+            }
+        }
+        req.setAttribute("samepers", samepers);
         req.setAttribute("employee", employeeDto);
         req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
     }
@@ -146,57 +192,76 @@ public class EmployeesServlet extends HttpServlet {
 
 
         ValidationReport report = new ValidationReport();
+        ValidFieldsReport vReport = new ValidFieldsReport();
 
         if (StringUtils.isBlank(name)) {
             report.addError("name", name, "Name is empty");
         } else if (!regexService.matchName(name)) {
             report.addError("name", name, "Name doesn't match minimal requirements");
         }
+        vReport.addValids("name", name);
 
         if (StringUtils.isBlank(familyname)) {
             report.addError("familyname", familyname, "Familyname is empty");
         } else if (!regexService.matchName(name)) {
             report.addError("familyname", familyname, "Familyname doesn't match minimal requirements");
         }
+        vReport.addValids("familyname", familyname);
 
         if (StringUtils.isBlank(email)) {
             report.addError("email", email, "Email is empty");
         } else if (!regexService.matchEmail(email)) {
             report.addError("email", email, "Email has incorrect format");
         }
+        vReport.addValids("email", email);
 
         if (StringUtils.isBlank(dateParam)) {
             report.addError("date", dateParam, "Date is empty");
         } else if (!regexService.matchDate(dateParam)) {
             report.addError("date", dateParam, "Date has incorrect format");
         }
+        vReport.addValids("date", dateParam);
 
         if (StringUtils.isBlank(zpParam)) {
             report.addError("zp", zpParam, "Zp is empty");
         } else if (!regexService.matchZp(zpParam)) {
             report.addError("zp", zpParam, "Zp has incorrect format");
         }
-
+        vReport.addValids("zp", zpParam);
 
         if (!report.isValid()) {
-            req.getSession().setAttribute("emp" + id, report);
+            if ((StringUtils.isNotBlank(id))) {
+                req.getSession().setAttribute("emp" + id, report);
+            } else {
+                req.getSession().setAttribute("notvalidsaddemp", report);
+                req.getSession().setAttribute("validsaddemp", vReport);
+            }
             resp.sendRedirect("/employees/employee?id=" + id + "&depid=" + depidParam);
         } else {
             Date date = SIMPLE_DATE_FORMAT.parse(dateParam);
             int zp = Integer.parseInt(zpParam);
             int depid = Integer.parseInt(depidParam);
-            if (StringUtils.isBlank(id)) {
-                empService.add(name, familyname, email, date, zp, depid);
-                String newEmpName = name;
-                req.getSession().removeAttribute("emp" + id);
-                resp.sendRedirect("/employees/list?depid=" + depidParam + "&newEmpName=" + newEmpName);
-
-            } else {
-                empService.edit(Integer.parseInt(id), name, familyname, email, date, zp, depid);
-                String editedEmpName = name;
-                req.getSession().removeAttribute("emp" + id);
-                resp.sendRedirect("/employees/list?depid=" + depidParam + "&editedEmpName=" + editedEmpName);
-            }
+                if (StringUtils.isBlank(id)) {
+                    if (!empService.add(name, familyname, email, date, zp, depid)) {
+                        String samepers = "this email is already registered in system";
+                        req.getSession().setAttribute("validsaddemp", vReport);
+                        resp.sendRedirect("/employees/employee?samepers=" + samepers + "&depid=" + depidParam);
+                    } else {
+                        String newEmpName = name;
+                        req.getSession().removeAttribute("notvalidsaddemp");
+                        req.getSession().removeAttribute("validsaddemp");
+                        resp.sendRedirect("/employees/list?depid=" + depidParam + "&newEmpName=" + newEmpName);
+                    }
+                } else {
+                    if (!empService.edit(Integer.parseInt(id), name, familyname, email, date, zp, depid)) {
+                        String samepers = "this email is already registered in system";
+                        resp.sendRedirect("/employees/employee?id=" + id + "&samepers=" + samepers + "&depid=" + depidParam);
+                    } else {
+                        String editedEmpName = name;
+                        req.getSession().removeAttribute("emp" + id);
+                        resp.sendRedirect("/employees/list?depid=" + depidParam + "&editedEmpName=" + editedEmpName);
+                    }
+                }
         }
     }
 }

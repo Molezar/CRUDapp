@@ -11,21 +11,6 @@ public class RegexService {
     public RegexService() {
     }
 
-    public boolean match(int regexType, String inputString) {
-        switch (regexType) {
-            case 1:
-                return matchName(inputString);
-            case 2:
-                return matchEmail(inputString);
-            case 3:
-                return matchDate(inputString);
-            case 4:
-                return matchZp(inputString);
-            default:
-                throw new IllegalArgumentException(regexType + " is not supported here");
-        }
-    }
-
     public boolean matchName(String inputString) {
         return Pattern.matches(nameRegex, inputString);
     }

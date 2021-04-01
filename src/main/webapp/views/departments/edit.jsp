@@ -32,6 +32,10 @@
             <input type="text" minlength="2" maxlength="32" pattern="[A-Za-z]{2,32}" value="${department.depName}"
                    required name="name"/>
         </p>
+        <c:if test="${samename != null}">
+            <div class="error" style="color:#ff0000">${samename}</div>
+        </c:if>
+
         <c:if test="${validationReport.errors['name'] != null}">
             <div class="error" style="color:#ff0000">${validationReport.errors['name'].error}</div>
         </c:if>
