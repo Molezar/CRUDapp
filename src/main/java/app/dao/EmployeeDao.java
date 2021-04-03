@@ -47,8 +47,10 @@ public class EmployeeDao extends AbstractDao {
         int k = 0;
         while (k < employee.size()) {
             Employee kemp = employee.get(k);
-            if (emp.equals(kemp)) {
-                return false;
+            if (kemp.getEmpID() != emp.getEmpID()) {
+                if (emp.equals(kemp)) {
+                    return false;
+                }
             }
             k++;
         }

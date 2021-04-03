@@ -123,7 +123,7 @@ public class EmployeesServlet extends HttpServlet {
             req.setAttribute("employee", employeeDto);
             req.setAttribute("samepers", samepers);
 
-            req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
+            req.getRequestDispatcher("/views/employees/update.jsp").forward(req, resp);
         }
 
         ValidationReport report = (ValidationReport) req.getSession().getAttribute("notvalidsaddemp");
@@ -166,7 +166,7 @@ public class EmployeesServlet extends HttpServlet {
         }
         req.setAttribute("samepers", samepers);
         req.setAttribute("employee", employeeDto);
-        req.getRequestDispatcher("/views/employees/edit.jsp").forward(req, resp);
+        req.getRequestDispatcher("/views/employees/update.jsp").forward(req, resp);
     }
 
     private void deleteEmployee(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -182,7 +182,7 @@ public class EmployeesServlet extends HttpServlet {
     }
 
     private void createOrUpdateEmployee(HttpServletRequest req, HttpServletResponse resp) throws IOException, ParseException {
-        String id = req.getParameter("id");
+        String idParameter = req.getParameter("id");
         String name = req.getParameter("name");
         String familyname = req.getParameter("familyname");
         String email = req.getParameter("email");
@@ -230,18 +230,18 @@ public class EmployeesServlet extends HttpServlet {
         vReport.addValids("zp", zpParam);
 
         if (!report.isValid()) {
-            if ((StringUtils.isNotBlank(id))) {
-                req.getSession().setAttribute("emp" + id, report);
+            if ((StringUtils.isNotBlank(idParameter))) {
+                req.getSession().setAttribute("emp" + idParameter, report);
             } else {
                 req.getSession().setAttribute("notvalidsaddemp", report);
                 req.getSession().setAttribute("validsaddemp", vReport);
             }
-            resp.sendRedirect("/employees/employee?id=" + id + "&depid=" + depidParam);
+            resp.sendRedirect("/employees/employee?id=" + idParameter + "&depid=" + depidParam);
         } else {
             Date date = SIMPLE_DATE_FORMAT.parse(dateParam);
             int zp = Integer.parseInt(zpParam);
             int depid = Integer.parseInt(depidParam);
-                if (StringUtils.isBlank(id)) {
+                if (StringUtils.isBlank(idParameter)) {
                     if (!empService.add(name, familyname, email, date, zp, depid)) {
                         String samepers = "this email is already registered in system";
                         req.getSession().setAttribute("validsaddemp", vReport);
@@ -253,7 +253,8 @@ public class EmployeesServlet extends HttpServlet {
                         resp.sendRedirect("/employees/list?depid=" + depidParam + "&newEmpName=" + newEmpName);
                     }
                 } else {
-                    if (!empService.edit(Integer.parseInt(id), name, familyname, email, date, zp, depid)) {
+                    int id = Integer.parseInt(idParameter);
+                    if (!empService.edit(id, name, familyname, email, date, zp, depid)) {
                         String samepers = "this email is already registered in system";
                         resp.sendRedirect("/employees/employee?id=" + id + "&samepers=" + samepers + "&depid=" + depidParam);
                     } else {

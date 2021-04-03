@@ -26,7 +26,7 @@ public class EmpService {
 
     public boolean edit(int id, String name, String familyname, String email, Date date, int zp, int depid) {
         EmployeeDao employeeDao = new EmployeeDao();
-        Employee emp = new Employee(name, familyname, email, date, zp, depid);
+        Employee emp = new Employee(id, name, familyname, email, date, zp, depid);
         return  employeeDao.edit(id, emp);
     }
 

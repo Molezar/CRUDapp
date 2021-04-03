@@ -96,7 +96,7 @@ public class DepartmentsServlet extends HttpServlet {
         }
         req.setAttribute("samename", samename);
         req.setAttribute("department", departmentDto);
-        req.getRequestDispatcher("/views/departments/edit.jsp").forward(req, resp);
+        req.getRequestDispatcher("/views/departments/update.jsp").forward(req, resp);
     }
 
     private void deleteDepartment(HttpServletRequest req, HttpServletResponse resp) throws IOException {
