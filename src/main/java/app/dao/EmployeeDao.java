@@ -23,19 +23,19 @@ public class EmployeeDao extends AbstractDao {
     }
 
     public Employee findById(int id) {
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(GETBYID);
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(GETBYID)) {
             preparedStatement.setInt(1, id);
-            ResultSet res = preparedStatement.executeQuery();
-            res.next();
-            int eid = res.getInt("id");
-            String name = res.getString("name");
-            String familyName = res.getString("familyname");
-            String email = res.getString("email");
-            Date date = res.getDate("dateofbirth");
-            int zp = res.getInt("zp");
-            int depId = res.getInt("depid");
-            return new Employee(eid, name, familyName, email, date, zp, depId);
+            try (ResultSet res = preparedStatement.executeQuery()) {
+                res.next();
+                int eid = res.getInt("id");
+                String name = res.getString("name");
+                String familyName = res.getString("familyname");
+                String email = res.getString("email");
+                Date date = res.getDate("dateofbirth");
+                int zp = res.getInt("zp");
+                int depId = res.getInt("depid");
+                return new Employee(eid, name, familyName, email, date, zp, depId);
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -58,44 +58,44 @@ public class EmployeeDao extends AbstractDao {
     }
 
     public List<Employee> list() {
-        try {
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(GETALLEMPS)) {
             ArrayList<Employee> employee = new ArrayList<>();
-            PreparedStatement preparedStatement = getConnection().prepareStatement(GETALLEMPS);
-            ResultSet res = preparedStatement.executeQuery();
-            while (res.next()) {
-                int id = res.getInt("id");
-                String name = res.getString("name");
-                String familyName = res.getString("familyname");
-                String email = res.getString("email");
-                Date date = res.getDate("dateofbirth");
-                int zp = res.getInt("zp");
-                int depId = res.getInt("depid");
+            try (ResultSet res = preparedStatement.executeQuery()) {
+                while (res.next()) {
+                    int id = res.getInt("id");
+                    String name = res.getString("name");
+                    String familyName = res.getString("familyname");
+                    String email = res.getString("email");
+                    Date date = res.getDate("dateofbirth");
+                    int zp = res.getInt("zp");
+                    int depId = res.getInt("depid");
 
-                employee.add(new Employee(id, name, familyName, email, date, zp, depId));
+                    employee.add(new Employee(id, name, familyName, email, date, zp, depId));
+                }
+                return employee;
             }
-            return employee;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     public List<Employee> list(int depid) {
-        try {
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(GETEMPS)) {
             ArrayList<Employee> employee = new ArrayList<>();
-            PreparedStatement preparedStatement = getConnection().prepareStatement(GETEMPS);
             preparedStatement.setInt(1, depid);
-            ResultSet res = preparedStatement.executeQuery();
-            while (res.next()) {
-                int id = res.getInt("id");
-                String name = res.getString("name");
-                String familyName = res.getString("familyname");
-                String email = res.getString("email");
-                Date date = res.getDate("dateofbirth");
-                int zp = res.getInt("zp");
-                int depId = res.getInt("depid");
-                employee.add(new Employee(id, name, familyName, email, date, zp, depId));
+            try (ResultSet res = preparedStatement.executeQuery()) {
+                while (res.next()) {
+                    int id = res.getInt("id");
+                    String name = res.getString("name");
+                    String familyName = res.getString("familyname");
+                    String email = res.getString("email");
+                    Date date = res.getDate("dateofbirth");
+                    int zp = res.getInt("zp");
+                    int depId = res.getInt("depid");
+                    employee.add(new Employee(id, name, familyName, email, date, zp, depId));
+                }
+                return employee;
             }
-            return employee;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -104,8 +104,7 @@ public class EmployeeDao extends AbstractDao {
 
     public boolean add(Employee emp) {
         if (empchecker(emp)) {
-            try {
-                PreparedStatement preparedStatement = getConnection().prepareStatement(INSERT_NEW);
+            try (PreparedStatement preparedStatement = getConnection().prepareStatement(INSERT_NEW)) {
                 preparedStatement.setString(1, emp.getName());
                 preparedStatement.setString(2, emp.getFamilyName());
                 preparedStatement.setString(3, emp.getEmail());
@@ -123,8 +122,7 @@ public class EmployeeDao extends AbstractDao {
     }
 
     public void remove(int id) {
-        try {
-            PreparedStatement preparedStatement = getConnection().prepareStatement(DELETE);
+        try (PreparedStatement preparedStatement = getConnection().prepareStatement(DELETE)) {
             preparedStatement.setInt(1, id);
             preparedStatement.execute();
         } catch (SQLException e) {
@@ -134,8 +132,7 @@ public class EmployeeDao extends AbstractDao {
 
     public boolean edit(int id, Employee emp) {
         if (empchecker(emp)) {
-            try {
-                PreparedStatement preparedStatement = getConnection().prepareStatement(UPDATE);
+            try (PreparedStatement preparedStatement = getConnection().prepareStatement(UPDATE)) {
                 preparedStatement.setString(1, emp.getName());
                 preparedStatement.setString(2, emp.getFamilyName());
                 preparedStatement.setString(3, emp.getEmail());

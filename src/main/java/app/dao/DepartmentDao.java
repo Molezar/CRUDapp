@@ -30,7 +30,6 @@ public class DepartmentDao extends AbstractDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private boolean namechecker(Department dep) {
@@ -41,7 +40,6 @@ public class DepartmentDao extends AbstractDao {
             Department kdep = department.get(k);
             if (dep.equals(kdep)) {
                 return false;
-//                throw new IllegalArgumentException("this name already exists");
             }
             k++;
         }
